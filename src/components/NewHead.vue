@@ -21,7 +21,7 @@
   }
 </script>
 <style scoped>
-  .header .h_top {line-height: 7vh;color: #fff;font-size: 1.2rem;background: #0FACF7;}
+  .header .h_top {line-height: 3.25rem;color: #fff;font-size: 1.2rem;background: #0FACF7;}
   .header .h_top a.go_back { position: absolute;left: 15px;};
 </style>
 
