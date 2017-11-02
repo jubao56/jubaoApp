@@ -35,7 +35,7 @@
     import base64 from 'base-64'
     import { cmnUserLogin } from '../libs/api'
     import NewHead from '../components/NewHead.vue'
-    import {setPlusStorage} from "../libs/common"
+    import {setPlusStorage,removePlusStorage,getPlusStorage} from "../libs/common"
     export default {
         components:{
           "new-head":NewHead,
@@ -49,20 +49,6 @@
         },
         methods:{
             ...mapMutations({removeFs:'REMOVEFS'}),
-            setCookie(name,value,time){
-                let hours = time?time:4;  //单位小时
-                let exp = new Date();
-                exp.setTime(exp.getTime() + hours*60*60*1000);
-                document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString() + ";path=/";
-            },
-            getCookie(name){
-                let arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)"); //正则匹配
-                if (arr = document.cookie.match(reg)) {
-                    return unescape(arr[2]) ;
-                }else {
-                    return null ;
-                }
-            },
             login(){
                 this.rememberUser(); //记住密码
                 let _this = this;
@@ -87,9 +73,8 @@
                                 _this.$router.push("/register")
                             });
                         }else if(res.err_code == 0){
-                            _this.setCookie(_this.$store.state.jubao_user,res.data.access_token);
-                            setPlusStorage("token",res.data.access_token)
-//                            document.cookie = _this.$store.state.jubao_user+'=' + res.data.access_token;
+//                            _this.setCookie(_this.$store.state.jubao_user,res.data.access_token);
+                            setPlusStorage("token",res.data.access_token,30*24)
                             _this.$router.push("/dashboard")
                         }else if(res.err_code == 1014){
                             MessageBox({
@@ -108,20 +93,20 @@
             },
             rememberUser(){
                 if(this.rememberMe){
-                    this.setCookie("rmbUser", "true", 30*24 ); //存储一个带 30 天期限的cookie
-                    this.setCookie("username", base64.encode(this.username), 30*24);
-                    this.setCookie("password", base64.encode(this.password), 30*24);
+                  setPlusStorage("rmbUser", "true", 30*24 ); //存储一个带 30 天期限的cookie
+                  setPlusStorage("username", base64.encode(this.username), 30*24);
+                  setPlusStorage("password", base64.encode(this.password), 30*24);
                 }else {
-                    this.setCookie("rmbUser", "false", -1 ); //存储一个带 30 天期限的cookie
-                    this.setCookie("username", this.username, -1);
-                    this.setCookie("password", this.password, -1);
+                  removePlusStorage("rmbUser"); //存储一个带 30 天期限的cookie
+                  removePlusStorage("username");
+                  removePlusStorage("password");
                 }
             },
             readrmbUser(){
-                if(this.getCookie('rmbUser') == 'true'){
+                if(getPlusStorage('rmbUser') == 'true'){
                     this.rememberMe = true;
-                    this.username = base64.decode(this.getCookie('username'));
-                    this.password = base64.decode(this.getCookie('password'));
+                    this.username = base64.decode(getPlusStorage('username'));
+                    this.password = base64.decode(getPlusStorage('password'));
                 }
             }
         },

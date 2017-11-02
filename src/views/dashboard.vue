@@ -214,8 +214,8 @@
 </template>
 
 <script>
-    import { cmnUserInfo,cmnCompanyInfo,zcbUserInfo,zcbOrderList,zcbAgreementList,cmnBaofuPayurl,cmnBaoFinish } from '../libs/api'
-    import {wwwJudge} from "../libs/common"
+    import { cmnUserInfo,cmnCompanyInfo,zcbUserInfo,zcbOrderList,zcbAgreementList,cmnBaofuPayurl,cmnBaoFinish,getToken } from '../libs/api'
+    import {wwwJudge,removePlusStorage} from "../libs/common"
     import {mapMutations,mapState} from "vuex"
     import { Toast,MessageBox,Indicator } from 'mint-ui';
     import QRious from 'qrious'
@@ -247,7 +247,7 @@
             }
         },
         methods:{
-            ...mapMutations({getCookie:'GETCOOKIE',removeFs:'REMOVEFS'}),
+            ...mapMutations({removeFs:'REMOVEFS'}),
             registerClose(){ //关闭应急支付
                 this.paySpare=false;
                 this.full_bg = false;
@@ -334,8 +334,8 @@
             //退出登录
             signOut(){
                 MessageBox.confirm('确定退出登录?').then(action => {
-                    if(this.$store.state.token){
-                        this.delCookie(this.$store.state.jubao_user);
+                    if(getToken()){
+                        removePlusStorage("token");
                         this.$store.state.token = '';
                         this.$router.push("/");
                     }
@@ -391,10 +391,11 @@
                         text: '请稍候...',
                         spinnerType: 'fading-circle'
                     });
+
                     this.$store.state.axios({
                         method:'post',
                         url:this.$store.state.zcbUrl+"/v1/zcb/deposit/new",
-                        headers:{'Authorization':'Bearer ' + this.$store.state.token},
+                        headers:{'Authorization':'Bearer ' + getToken()},
                         data:{'type':this.payType,redirect_url:this.redirect_url,"amount":this.amount*1},
                         timeout:10000
                     }).then(function (response) {
@@ -469,13 +470,7 @@
                 $(".setting_title i.icon").toggle();
             }
         },
-        computed:{
-            ...mapState([
-                'token',
-            ]),
-        },
         created(){
-            this.getCookie(this.$store.state.jubao_user);
             this.removeFs();
 
             if (!wwwJudge()) { //如果为测试环境
@@ -483,7 +478,7 @@
             }
         },
         mounted(){
-            if(!this.$store.state.token){
+            if(!getToken()){
                 this.$router.push("/login")
             }
             this.getIniInfo();

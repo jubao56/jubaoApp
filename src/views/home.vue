@@ -130,9 +130,18 @@
             }
         },
         computed: {
-            token(){
-                return getToken();
-            },
+          token(){
+            let res;
+            if(window.plus){
+              plusReady();
+            }else{
+              document.addEventListener('plusready',plusReady,false);
+            }
+            function plusReady() {
+              res =  getToken()
+            }
+            return  res;
+          },
         },
         methods: {
             ...mapMutations({
@@ -203,14 +212,14 @@
 //                })
 //            }
         },
-//        mounted(){
-//            this.$nextTick(()=>{
-//                this.resize();
-//            })
+        mounted(){
+            this.$nextTick(()=>{
+                this.resize();
+            })
 //            window.onresize=()=>{
 //                this.resize()
 //            }
-//        },
+        },
         components:{
             Tab,
             FontLun

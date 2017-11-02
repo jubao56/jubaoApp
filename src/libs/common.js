@@ -27,44 +27,52 @@ export let getCookie= (name)=>{
         return null ;
     }
 }
-export const setStorage = (message) =>{
-  let key ="jubao56";
-  let jubaoStorage =  JSON.parse(window.sessionStorage.getItem(key));
-  jubaoStorage=jubaoStorage==null?{}:jubaoStorage;
-  for(let i in message){
-    jubaoStorage[i]=message[i]
-  }
-  window.sessionStorage.setItem(key,JSON.stringify(jubaoStorage));
-}
-
-//获取item信息，检测是否过期，过期则重定向---app
-export const getPlusStorage = (key) => {
-  let data = JSON.parse(window.plus.storage.getItem(key));
-  if(data.expires){   //如果存在time,则证明有过期时间，需要验证
-    let now = +new Date()
-    if(data.expires > now){ //过期了
-      removePlusStorage(key)
-      return undefined
-    }else {
-      let res = Object.assign({},data)
-      delete res.expires;
-      return res
-    }
-  }else{
-    return data
-  }
-};
+//设置plus 的本地存储
+/**
+ * @param key {String}   存储的key值
+ * @param value {Object}  存储对象或字符串
+ * @param exp {Number}  过期时间  单位小时
+ *
+ */
 export const setPlusStorage = (key, value, exp) => {
-  let data;
+  let data,expires;
   if(exp){
-    let expires = new Date().getTime() + exp * 60 * 60 * 1000;
-    data = JSON.stringify({expires, ...value})
+    expires = new Date().getTime() + exp * 60 * 60 * 1000;
   }else{
-    data = JSON.stringify(value)
+    expires = 0;//expires为0即无过期时间
   }
+  data = JSON.stringify({expires,value});
+  console.log(window.plus,key)
   window.plus.storage.setItem(key,data)
-};
-
+}
+//删除plus 的本地存储
+/**
+ * @param key {String}   要删除的数据的key值
+ *
+ */
 export const removePlusStorage = (key) => {
   window.plus.storage.removeItem(key)
 }
+//获取plus 的本地存储
+/**
+ * @param key {String}   要获取的数据的key值
+ *
+ */
+export const getPlusStorage = (key) => {
+  let data = JSON.parse(window.plus.storage.getItem(key));
+  if(!data) return;
+  if(data.expires){   //如果存在expires,则证明有过期时间，需要验证
+    let now = +new Date()
+    if(data.expires < now){ //过期了
+      removePlusStorage(key)
+      return undefined
+    }else {
+      let res = Object.assign({},data);
+      delete res.expires;
+      return res.value
+    }
+  }else{
+    return data.value
+  }
+}
+
