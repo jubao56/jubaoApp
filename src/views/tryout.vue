@@ -354,6 +354,16 @@
                 </div>
             </div>
         </div>
+      <!--app start-->
+        <div class="weui-gallery" style="display: block" v-show="gallery">
+            <span class="weui-gallery__img" :style="'background-image: url('+galleryImg+');'" @click="galleryHide"></span>
+            <div class="weui-gallery__opr" @click="galleryDelete">
+                <a href="javascript:" class="weui-gallery__del">
+                    <i class="weui-icon-delete weui-icon_gallery-delete"></i>
+                </a>
+            </div>
+        </div>
+      <!--app end-->
     </div>
 </template>
 
@@ -363,7 +373,9 @@
     import "weui";
     import weui from 'weui.js';
     import {cmnUserInfo,zcbUserInfo,zcbOrderList,zcbOrderPrice,zcbOrderSave,zcbOrderTrySave,zcbOrderTryInfo,zcbOrderInfo} from '../libs/api';
-
+    //app start
+    import "../iconfont/iconfont.css"
+    //app end
     export default {
         data(){
             return {
@@ -548,8 +560,11 @@
                   let res = JSON.parse(t.responseText);
                   let tempName = (res.data.substring(res.data.lastIndexOf("/")+1)).replace(/ /g,"%20").replace(/\(/g,"%28").replace(/\)/g,"%29");
                   obj.file_url = res.data.substring(0,res.data.lastIndexOf("/")+1)+tempName;
-//                            console.log(obj.file_url,"上传文件的地址");
+//                  console.log(obj.file_url,"上传文件的地址");
+//                  console.log(JSON.stringify(obj),"obj的值");
                   _this.fileShowList.push(obj);//页面预览
+                  console.log(JSON.stringify(_this.fileShowList));
+                  console.log("_this.fileShowList ---- end");
                   Indicator.close();
                   Toast({
                     message: '上传成功',

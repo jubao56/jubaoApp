@@ -24,7 +24,8 @@
     function backBtn() {
       let location = window.location.href;
       let beforeStr = location.substring(location.lastIndexOf("/")+1);
-      if(beforeStr){
+      console.log(beforeStr,"回退按钮判断");
+      if(beforeStr=="home"){
         window.history.go(-1);
       }else{
         ('iOS'==plus.os.name)?plus.nativeUI.confirm('确认退出？', function(e){
