@@ -117,7 +117,7 @@
 </template>
 
 <script>
-    import { Indicator } from 'mint-ui';
+    import { Indicator,Toast,MessageBox } from 'mint-ui';
     import {baiduShare} from "../libs/baiduShare"
     import {zcbOrderConfirmation,zcbOrderTryInfo,zcbOrderInfo,zcbOrderPolicy} from '../libs/api';
     export default {

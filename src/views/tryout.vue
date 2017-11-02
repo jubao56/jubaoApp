@@ -359,7 +359,7 @@
 
 <script>
     import {mapMutations, mapState} from "vuex"
-    import { MessageBox,Indicator } from 'mint-ui';
+    import { MessageBox,Indicator,Toast } from 'mint-ui';
     import "weui";
     import weui from 'weui.js';
     import {cmnUserInfo,zcbUserInfo,zcbOrderList,zcbOrderPrice,zcbOrderSave,zcbOrderTrySave,zcbOrderTryInfo,zcbOrderInfo} from '../libs/api';
