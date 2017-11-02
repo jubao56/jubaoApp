@@ -23,16 +23,19 @@
                             <p>　　上传正确格式的电子表格可以在投保成功确认单上显示运单号，分享给您的客户。让您的客户知道您已为货物投保，让您的客户更放心。</p>
                         </div>
 
-                        <div class="CDshare fr">
-                            <span style="float:left;margin-top:6px;">分享确认单</span>
-                            <div class="bdsharebuttonbox" style="display: inline;float:right;margin-left:6px;" data-tag="share_0">
-                                <a href="javascript:void(0)" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
-                                <a href="javascript:void(0)" class="bds_qzone " data-cmd="qzone" title="分享到QQ空间"></a>
-                                <a href="javascript:void(0)" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-                                <a href="javascript:void(0)" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
-                            </div>
-
+                      <!--app start=================-->
+                      <div class="CDshare fr">
+                        <span style="float:left;margin-top:6px;"></span>
+                        <div class="bdsharebuttonbox" style="display: inline;float:right;margin-left:6px;" data-tag="share_0">
+                          <a  class="bds_weixin" data-cmd="weixin" title="分享到微信" @click="shareWeixinMessage()"></a>
+                          <a  class="bds_save" data-cmd="save" title="保存到相册" @click="saveInGallery()"></a>
+                          <!--<a href="javascript:void(0)" class="bds_share" data-cmd="shareSystem" title="系统分享" @click="shareSystem()"></a>-->
+                          <!--<a href="javascript:void(0)" class="bds_qzone " data-cmd="qzone" title="分享到QQ空间"></a>-->
+                          <!--<a href="javascript:void(0)" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>-->
+                          <!--<a href="javascript:void(0)" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>-->
                         </div>
+                      </div>
+                      <!--===================app end-->
                     </div>
                     <div class="baodan" style="border:0.1rem solid black;">
                         <a href="javascript:void(0)" id="listImgBox">
@@ -49,14 +52,16 @@
                         <h3>装车清单：</h3>
                         <span>若遇险情，以您上传的装车清单附件作为赔偿依据。</span>
                         <br>
-                        <div style="float:left;width:100%;margin-bottom: 20px;margin-top: 15px;">
-                            <ul id="filelist" style="float:left;width:100%;">
-                                <li style="float:left;width:100%;height:30px;"  v-for="(val,idx) in linkLists">
-                                    <a>{{val.name}}</a>&nbsp;&nbsp;&nbsp;
-                                    <a :href="val.file_url" target="_blank">下载</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                </li>
-                            </ul>
-                        </div>
+                      <!--app=================-->
+                      <div style="float:left;width:100%;margin-bottom: 20px;margin-top: 15px;">
+                        <ul id="filelist" style="float:left;width:100%;">
+                          <li style="float:left;width:100%;height:30px;"  v-for="(val,idx) in linkLists">
+                            <a href="javascript:void(0)">{{val.name}}</a>&nbsp;&nbsp;&nbsp;
+                            <a href="javascript:void(0)" @click="createDownload(val.name,val.file_url)">下载</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                          </li>
+                        </ul>
+                      </div>
+                      <!--===================app-->
                         <br/><br/>
                     </div>
 
@@ -70,7 +75,9 @@
                             <th style="border-right:1px solid #eaeaea;width:16%;background-color:#bfe2fc">目的地</th>
                             <th style="border-right:1px solid #eaeaea;width:19%;background-color:#bfe2fc">货物种类</th>
                             <th style="border-right:1px solid #eaeaea;width:12%;background-color:#bfe2fc">数量</th>
-                            <th style="width:40%;background-color:#bfe2fc">分享运单</th>
+                          <!--app======-->
+                          <th style="width:20%;background-color:#bfe2fc">分享运单</th>
+                          <!--======app-->
                         </tr>
                         </thead>
                         <tbody>
@@ -82,18 +89,19 @@
                             <td style="border-right:1px solid #eaeaea; ">{{val.name}}</td>
                             <td style="border-right:1px solid #eaeaea; ">{{val.quantity/100 | number(2)}}</td>
 
-                            <td>
-                                <div class="CDshare">
-                                    <div class="share" id="changeBaiduStyle">
-                                        <div class="bdsharebuttonbox" style="display: flex;float:right;margin-left:6px;" :data-tag="'share_'+(idx+1)">
-                                            <a href="javascript:void(0)" class="bds_weixin" data-cmd="weixin" title="分享到微信" ></a>
-                                            <a href="javascript:void(0)" class="bds_qzone " data-cmd="qzone" title="分享到QQ空间"></a>
-                                            <a href="javascript:void(0)" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-                                            <a href="javascript:void(0)" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
-                                        </div>
-                                    </div>
+                          <!--app start-->
+                          <td>
+                            <div class="CDshare">
+                              <div class="share" id="changeBaiduStyle">
+                                <div class="bdsharebuttonbox" style="display: inline;float:right;margin-left:6px;" :data-tag="'share_'+(idx+1)">
+                                  <a  class="bds_weixin" data-cmd="weixin" title="分享到微信" @click="shareWeixinMessage(val.track_no)"></a>
+                                  <a  class="bds_save" data-cmd="save" title="保存到相册" @click="saveInGallery(val.track_no)"></a>
+
                                 </div>
-                            </td>
+                              </div>
+                            </div>
+                          </td>
+                          <!--app end-->
                         </tr>
                         </tbody>
                     </table>
@@ -141,6 +149,146 @@
             }
         },
         methods:{
+          //app start========================
+          finish(){
+            MessageBox.confirm('将跳转到个人中心，是否继续？').then(action => {
+              this.$router.push("/user")
+            });
+          },
+          createDownload(name,url){
+            Indicator.open({
+              text: '文件下载中...',
+              spinnerType: 'fading-circle'
+            });
+            let dtask = window.plus.downloader.createDownload( url, {method:"GET"}, function ( d, status ) {
+              // 下载完成
+              if ( status == 200 ) {
+                window.plus.gallery.save(  d.filename);
+                Indicator.close();
+                Toast({
+                  message: '下载成功,文件以保存至相册!',
+                  iconClass: 'iconfont icon-success',
+                  duration: 1000
+                });
+              } else {
+                Toast("下载失败 ：" +status);
+              }
+            });
+            //dtask.addEventListener( "statechanged", onStateChanged, false );
+            dtask.start();
+          },
+          shareWeixinMessage(trackNo){
+            Indicator.open({
+              text: '文件分享中...',
+              spinnerType: 'fading-circle'
+            });
+            let shareHref="";
+            if(trackNo){
+              shareHref=this.$store.state.zcbUrl+"/v1/zcb/order/confirmation?order_id="+this.listId+
+                "&track_no="+trackNo;
+            }else{
+              shareHref=this.$store.state.zcbUrl+"/v1/zcb/order/confirmation?order_id="+this.listId;
+            }
+            let shareMessage = {
+              content:"聚保物流，用心为您负责！",
+              href:shareHref,
+              extra:{scene:"WXSceneTimeline"},
+              thumbs:[shareHref],//缩略图
+              title:"聚保物流"
+            };
+            //判断是否授权 -- 没授权则直接授权
+//                alert(JSON.stringify(this.sharewx));
+            this.sharewx.send( shareMessage, function(){
+              Indicator.close();
+              Toast({
+                message: '分享成功',
+                iconClass: 'iconfont icon-success',
+                duration: 1000
+              });
+            }, function(e){
+              Indicator.close();
+              Toast("分享失败");
+            });
+          },
+          saveInGallery(trackNo){
+            Indicator.open({
+              text: '文件保存中...',
+              spinnerType: 'fading-circle'
+            });
+            let url="";
+            if(trackNo){
+              url=this.$store.state.zcbUrl+"/v1/zcb/order/confirmation?order_id="+this.listId+
+                "&track_no="+trackNo;
+            }else{
+              url=this.$store.state.zcbUrl+"/v1/zcb/order/confirmation?order_id="+this.listId;
+            }
+            let dtask = window.plus.downloader.createDownload( url, {method:"GET"}, function ( d, status ) {
+              // 下载完成
+              if ( status == 200 ) {
+                window.plus.gallery.save(d.filename);
+                Indicator.close();
+                Toast({
+                  message: '该订单已成功保存至相册',
+                  duration: 1000,
+                  iconClass: 'iconfont icon-success',
+                });
+              } else {
+                Toast("保存失败 ：" +status);
+              }
+            });
+            dtask.start();
+          },
+          shareSystem(trackNo){
+            let url="";
+            if(trackNo){
+              url=this.$store.state.zcbUrl+"/v1/zcb/order/confirmation?order_id="+this.listId+
+                "&track_no="+trackNo;
+            }else{
+              url=this.$store.state.zcbUrl+"/v1/zcb/order/confirmation?order_id="+this.listId;
+            }
+            let p = ""; //本地地址
+            let ShareMessage= {
+              content:'整车保订单分享',
+              thumbs:[p],
+              pictures:[p],
+              href:p,
+            }
+            window.plus.share.sendWithSystem?window.plus.share.sendWithSystem(ShareMessage, function(){
+//                    console.log("success")
+            }, function(e){
+              Toast({
+                message: '调用分享失败',
+                duration: 1000
+              });
+            }):shareSystemNativeJS();
+            function shareSystemNativeJS() {
+              if(window.plus.os.name!=='Android'){
+                window.plus.nativeUI.alert('此平台暂不支持系统分享功能!');
+                return;
+              }
+              var intent=new Intent(Intent.ACTION_SEND);
+              var p = url;
+              if(p.substr(0,7)==='file://'){
+                p=p.substr(7);
+              }else if(p.sub(0)!=='/'){
+                p=window.plus.io.convertLocalFileSystemURL(p);
+              }
+              var f = new File(p);
+              var uri = window.Uri.fromFile(f);
+              if(f.exists()&&f.isFile()){
+//                        console.log('image/*');
+                intent.setType('image/*');
+                intent.putExtra(Intent.EXTRA_STREAM,uri);
+              }else{
+//                        console.log('text/plain');
+                intent.setType('text/plain');
+              }
+              intent.putExtra(Intent.EXTRA_SUBJECT,'jubao56');
+              intent.putExtra(Intent.EXTRA_TEXT,sharecontent.value);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
+          },
+          //==========================app end
             getParamName(name) {
                 var url = location.search; //获取url中"?"符后的字串
                 var theRequest = new Object();
@@ -240,56 +388,46 @@
             }
         },
         created(){
-            this.bgFlag=true;
-            Indicator.open();
-            let _this=this;
-            var mes = this.getParamName('status').split('_');
-            this.status= mes[0];
-            this.listId = mes[1];
-            this.getBaodan();
-            Promise.all([this.getImg(),this.getMsg()])
-                .then(function (result) {
-//                    console.log(result);
-//                    console.log(_this.orderLists,"百度分享");
-                    //百度分享设置
-                    let beforeUrl = location.substring(0,location.indexOf("#")-1);
-//                    let beforeUrl = window.location.origin;
-                    console.log(beforeUrl,"beforeUrl")
-//                    beforeUrl = 'http://localhost:63342/jubaom2/jubaov3-mobile'
-                    let shareList = [] ;
-                    let shareList0=[{
-                        tag:"share_0",
-                        bdUrl:beforeUrl+"/baiduShare.html?order_id="+_this.listId+"&order_type=zcb"
-//                        bdUrl:_this.$store.state.zcbUrl+"/v1/zcb/order/confirmation?order_id="+_this.listId
-                    }];
-                    console.log(shareList0[0].bdUrl)
-                    for(let i=0;i<_this.orderLists.length;i++){
-                        let tempObj = {
-                            tag:"share_"+(i+1),
-                            bdUrl:beforeUrl+"/baiduShare.html?order_id="+this.listId+"&track_no="+this.orderLists[i].track_no+"&order_type=zcb"
+          this.$store.state.token =JSON.parse(window.plus.storage.getItem("jubao56")).token;
+          this.bgFlag=true;
+          Indicator.open();
+          let _this=this;
+          //app===
+          if(window.plus){
+            plusReady();
+          }else{
+            document.addEventListener('plusready',plusReady,false);
+          }
 
-//                            bdUrl:_this.$store.state.zcbUrl+"/v1/zcb/order/confirmation?order_id="+_this.listId+
-//                            "&track_no="+_this.orderLists[i].track_no
-                        };
-                        shareList.push(tempObj)
-                    }
-                    let finalShare = shareList.concat(shareList0);
+          function plusReady() {
+            // 扩展API加载完毕，现在可以正常调用扩展API
+            window.plus.share.getServices(function (s) {
+              _this.shares = s;
+              // alert(JSON.stringify(_this.shares));
+              for (var i in s) {
+                if ('weixin' == s[i].id) {
+                  _this.sharewx = s[i];
+                }
+              }
+            }, function (e) {
+              alert("获取分享服务列表失败：" + e.message);
+            });
+            //=====app
+            let location = window.location.href;
+            let beforeStr = location.substring(location.indexOf("?")+1);
+            if(beforeStr.indexOf("?")!=-1){
+              beforeStr=beforeStr.substring(beforeStr.indexOf("?")+1)
+            }
+            let locMsg = beforeStr.substring(beforeStr.indexOf("?") + 1).split("_");
+  //            let locMsg =window.location.href.substring(window.location.href.indexOf('?')+1).split("&");
+            _this.status= locMsg[0].split('=')[1];
+            _this.listId = locMsg[1];
+            _this.getBaodan();//生成电子保单
+            Promise.all([_this.getImg(),_this.getMsg()])
+              .then(function (result) {
 
-                    window._bd_share_config = {
-                        "common": {
-                            "bdSnsKey": {},
-                            "bdText": "聚保整车保保单!我们将用心为您负责!",
-                            "bdMini": "2",
-                            "bdMiniList": false,
-                            "bdPic": "http://www.jubao56.com/upload_admin/2016-07-05%2010:08:50-banner4_m.jpg",
-                            "bdStyle": "0",
-                            "bdSize": "24"
-                        }, "share" : finalShare
-                    };
-
-                    window._bd_share_main=null;
-                    baiduShare()
-                })
+              })
+          }
         },
         mounted() {
 

@@ -255,11 +255,14 @@
 
                                                         </ul>
 
-                                                        <div class="weui-uploader__input-box">
-                                                            <input id="uploaderInput" name="xlfile"
-                                                                   class="weui-uploader__input" type="file"
-                                                                   accept="image/*" multiple="" >
-                                                        </div>
+                                                      <!--app=======-->
+                                                      <div class="weui-uploader__input-box" @click="appendByGallery">
+
+                                                      </div>
+                                                      <div class="weui-uploader__camera-box" @click="appendByCamera">
+
+                                                      </div>
+                                                      <!--=======app-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -416,6 +419,14 @@
                 btnFlag:true,
                 timeFlag:true,
                 ispayConfirm: false, // 判断是否是从投保确认页返回
+              //app start====================
+              //上传文件
+              uploadFiles:[],
+              //相册预览功能
+              gallery:false,
+              galleryImg:"",
+              idx:0,  //要删除的idx
+              //=======================app end
             }
         },
         computed: {
@@ -485,6 +496,113 @@
             ...mapMutations({
                 removeFs:'REMOVEFS'
             }),
+          //app start=============================
+          //上传功能==========================================================
+          appendByCamera(){
+            let _this=this;
+            let plus = window.plus;
+            window.plus.camera.getCamera().captureImage(function(p){
+              plus.gallery.save( p);//相册生成图片
+              _this.appendFile(p);
+            });
+          },
+          appendByGallery(){//相册选取
+            let _this=this;
+            let plus = window.plus;
+            window.plus.gallery.pick(function(p){
+              _this.appendFile(p);
+            });
+          },
+          appendFile(p){
+            let name = p.substr(p.lastIndexOf('/')+1);
+            let imgPath =  window.plus.io.convertLocalFileSystemURL(p);// 将本地URL路径转换成平台绝对路径
+            this.uploadFiles.push({name:name,path:p});
+            function getUid(){
+              return Math.floor(Math.random()*100000000+10000000).toString();
+            }
+            let uid=getUid();
+            this.upload({name:name,file_url:imgPath,uid:uid})
+
+          },
+          upload(obj){
+            // 产生一个随机数
+            let _this=this;
+            function getUid(){
+              return Math.floor(Math.random()*100000000+10000000).toString();
+            }
+
+            let plus=window.plus;
+            if(this.uploadFiles.length<=0){
+              plus.nativeUI.alert("没有添加上传文件！");
+              return;
+            }
+            Indicator.open({
+              text: '上传中...',
+              spinnerType: 'fading-circle'
+            });
+
+            let task=plus.uploader.createUpload(this.$store.state.fileUrl+"/res/file/upload",
+              {method:"POST"},
+              function(t,status){ //上传完成
+                if(status==200){
+                  let res = JSON.parse(t.responseText);
+                  let tempName = (res.data.substring(res.data.lastIndexOf("/")+1)).replace(/ /g,"%20").replace(/\(/g,"%28").replace(/\)/g,"%29");
+                  obj.file_url = res.data.substring(0,res.data.lastIndexOf("/")+1)+tempName;
+//                            console.log(obj.file_url,"上传文件的地址");
+                  _this.fileShowList.push(obj);//页面预览
+                  Indicator.close();
+                  Toast({
+                    message: '上传成功',
+                    iconClass: 'iconfont icon-success',
+                    duration: 1000
+                  });
+                }else{
+                  alert("上传失败")
+                }
+              }
+            );
+            task.addData("uid",getUid());
+            for(var i=0;i<this.uploadFiles.length;i++){
+              var f=this.uploadFiles[i];
+              task.addFile(f.path,{key:"fileVal"});
+            }
+            task.start();
+          },
+          editor(file_url,idx){
+            window.plus.navigator.setStatusBarBackground('#000000');
+            this.gallery=true;
+            this.galleryImg=file_url;
+            this.idx=idx;
+            // Android处理返回键
+            window.plus.key.removeEventListener('backbutton',backBtn,false);
+            window.plus.key.addEventListener('backbutton',this.hideModel,false);
+          },
+          hideModel(){
+            this.gallery=false;
+          },
+          galleryHide(){
+            window.plus.key.removeEventListener('backbutton',this.hideModel,false);
+            window.plus.key.addEventListener('backbutton',backBtn,false);
+            this.gallery=false;
+            window.plus.navigator.setStatusBarBackground('#455468');
+          },
+          galleryDelete(){
+            let _this=this;
+            MessageBox.confirm('确定删除该图片?').then(action => {
+              window.plus.key.removeEventListener('backbutton',_this.hideModel,false);
+              window.plus.key.addEventListener('backbutton',backBtn,false);
+              _this.fileShowList.splice(_this.idx,1);
+              _this.gallery=false;
+              window.plus.navigator.setStatusBarBackground('#455468');
+            },action => {
+              window.plus.key.removeEventListener('backbutton',_this.hideModel,false);
+              window.plus.key.addEventListener('backbutton',backBtn,false);
+              _this.gallery=false;
+              window.plus.navigator.setStatusBarBackground('#455468');
+            });
+          },
+          //上传功能==========================================================
+          //=============================app end
             //========车牌号码判定========
             carNumJudgeT(){   //判定车牌号是否符合要求
                 if (!this.carShowFlagT) {
@@ -1066,4 +1184,17 @@
     .artic .main .baofei .b_con .b_list .b_right{
         height: auto;
     }
+    /*app start*/
+    .weui-uploader__camera-box{
+      float: left;
+      position: relative;
+      margin-right: 9px;
+      margin-bottom: 9px;
+      width: 77px;
+      height: 77px;
+      border: 1px solid #D9D9D9;
+      background: url("../img/appImg/camera.png") no-repeat center center;
+      background-size: 61.2px 60px;
+    }
+    /*app end*/
 </style>
