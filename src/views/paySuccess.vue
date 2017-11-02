@@ -438,6 +438,33 @@
 
 <style lang="scss" scoped>
     @import "../css/common";
+    /*app start*/
+    #changeBaiduStyle{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    /*background-position: 0 -1612px;*/
+    .bds_weixin {
+      background-image: url(../img/appImg/wechat2.png);
+    }
+    .bds_save{
+      background-image: url(../img/appImg/save1.png)!important;
+    }
+    .bds_share{
+      background-image: url(../img/appImg/share.png)!important;
+    }
+    .bdsharebuttonbox a{
+      float: left;
+      font-size: 18px;
+      padding-left: 25px;
+      line-height: 24px;
+      height: 24px;
+      background-repeat: no-repeat;
+      cursor: pointer;
+      margin: 6px 6px 6px 0;
+    }
+    /*app end*/
     #changeBaiduStyle a{
         margin:6px 3px 6px 0;
     }
