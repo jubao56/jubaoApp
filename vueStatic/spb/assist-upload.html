@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-协助信息上传</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/weui.min.js"></script>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+    <div class="box" v-cloak @click="uploadImg($event)">
+        <div class="top_bar">
+            <!--<a class="back fl" href="javascript:;"><img src="img/back.png"/> </a>-->
+            <span class="title">填写协同信息</span>
+        </div>
+        <div style="height: 1.2rem"></div>
+        <template v-for="item in content">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>{{item.slice(0,item.indexOf(':'))}}:</p>
+                </div>
+                <div class="weui-cell__ft tover" style="width: 5rem">{{item.slice(item.indexOf(':')+1,item.length)}}</div>
+            </div>
+        </template>
+        <div class="weui-cells__title"><!--因<b>{{insPerson}}</b>投保商铺档口保险需要，-->请协助拍摄并上传以下类型照片：</div>
+        <div class="fill_box">
+            <template v-for="(item,index) in description">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <div class="weui-uploader">
+                            <div class="weui-uploader__hd">
+                                <p class="weui-uploader__title">{{item.substring(0,item.indexOf('|'))}}</p>
+                            </div>
+                            <div class="weui-uploader__bd" :data-pic="item.substring(item.indexOf('|')+1)">
+                                <ul class="weui-uploader__files">
+                                </ul>
+                                <div class="weui-uploader__input-box">
+                                    <input class="weui-uploader__input" :fileType="item.substring(item.indexOf('|')+1,item.length)" type="file" accept="image/*" multiple="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div style="height: 1.2rem"></div>
+        <div class=" send_help_btn">
+            <a href="javascript:;" @click="postInfo" class="weui-btn weui-btn_primary">确认完成</a>
+        </div>
+    </div>
+</body>
+<script>
+    var assist_id = window.location.href.substring(window.location.href.indexOf("?")+1,window.location.href.length);
+    //console.log(assist_id);
+    var vm = new Vue({
+        el:'.box',
+        data: {
+            description:[],
+            content:[],
+            fileds:[],
+            fileType:[],
+            uploadCount: {}
+        },
+        methods:{
+            //加载数据
+            getIniInfo:function(){
+                $.ajax({
+                    url:cmnUrl + '/v1/cmn/assist/info',
+                    type:'get',
+                    data:{'id':Number(assist_id)},
+                    beforeSend: function(data){
+                        //如果没有加载数据，会显示loading
+                        if(data.readyState == 0){
+                            weui.loading('loading');
+                        }
+                    },
+                    success:function(data){
+                        console.log(data.data,111);
+                        vm.fileds = data.data.fields.split(',');
+                        vm.content = data.data.content.split(';');
+                        vm.description = data.data.description.split(',');
+                        console.log(vm.fileds);
+                        for(var i=0;i<vm.fileds.length;i++){
+//                            if(vm.fileds[i]=="license_file_url"){
+//                                vm.fileType.push(1)
+//                            }else if(vm.fileds[i]=="front_image_urls"){
+//                                vm.fileType.push(32)
+//                            }else if(vm.fileds[i]=="inside_image_urls"){
+//                                vm.fileType.push(64)
+//                            }else if(vm.fileds[i]=="fire_device_image_urls"){
+//                                vm.fileType.push(128)
+//                            }else if(vm.fileds[i]=="form_image_urls"){
+//                                vm.fileType.push(256)
+//                            }else if(vm.fileds[i]=="pay_file_url"){
+//                                vm.fileType.push(512)
+//                            }
+                            vm.fileType[i] = vm.fileds[i].split('-')[1];
+                        };
+                        for(var i=0;i<vm.description.length;i++){
+                            vm.description[i] = vm.description[i]+'|'+vm.fileType[i]
+                            vm.uploadCount[vm.fileType[i]] = 0;
+                        }
+                        console.log(vm.uploadCount)
+                        console.log(vm.description)
+                    },
+                    complete: function(data){
+                        //数据加载成功之后，loading 隐藏
+                        if(data.status == 200){
+                            weui.loading('loading').hide();
+                        }
+                    },
+                })
+            },
+            //上传,查看图片
+            uploadImg:function(e){
+                var e = e || window.event;//事件委托
+                var target = e.target || e.srcElement;//兼容chrome,ie
+                var $v = $(target).parents('.weui-cell');
+                var type = $(target).parents('.weui-uploader__bd').attr('data-pic')
+//                console.log(vm.uploadCount)
+//                console.log(vm.uploadCount[type])
+//                var uploadCount = 0;
+                if(target.className == 'weui-uploader__input'||target.className == 'weui-uploader__input lisence'){
+                    weui.uploader($v, {
+                        url: fileUrl + '/res/file/upload',
+                        auto: true,
+                        type: 'file',
+                        fileVal: 'fileVal',
+                        compress: {
+                            width: 1600,
+                            height: 1600,
+                            quality: .8
+                        },
+                        onBeforeQueued: function(files,item) {
+                            // `this` 是轮询到的文件, `files` 是所有文件
+                            if(["image/jpg", "image/jpeg", "image/png", "image/gif"].indexOf(this.type) < 0){
+                                weui.alert('请上传图片');
+                                return false; // 阻止文件添加
+                            }
+                            if(this.size > 10 * 1024 * 1024){
+                                weui.alert('请上传不超过10M的图片');
+                                return false;
+                            }
+                            if (files.length > 3) { // 防止一下子选择过多文件
+                                weui.alert('一次最多只能上传3张图片，请重新选择');
+                                return false;
+                            }
+                            if ($(target).parents('.weui-uploader__bd').find('li').length + 1 > 5) {
+                                weui.alert('最多只能上传5张图片');
+                                return false;
+                            }
+                            //限制一张营业执照
+                            if(type == 1){
+                                if (files.length > 1) { // 防止一下子选择过多文件
+                                    weui.alert('营业执照只能上传1张图片，请重新选择');
+                                    return false;
+                                }
+                                $v.find('li').remove();
+                            }
+                            // return true; // 阻止默认行为，不插入预览图的框架
+                        },
+                        onBeforeSend: function(data, headers){
+                            var fileType = Number($(target).attr('fileType'));
+                            $.extend(data, { "product_name": "spb" ,"file_name": this.name,"file_type":fileType});
+                            //$.extend(headers, {'JB-Filename':encodeURI(this.name)}); // 可以扩展此对象来控制上传头部
+                        },
+                        onQueued: function(){
+                        },
+
+                        onSuccess: function(ret){
+                            if(type == 1){
+                                $(target).parents('.weui-uploader__bd').find('li').attr('picUrl',ret.data)
+                            }else{
+                                $(target).parents('.weui-uploader__bd').find('li').eq(vm.uploadCount[type]).attr('picUrl',ret.data);
+                                vm.uploadCount[type]++;
+                            }
+                        },
+
+                    });
+                }else if(target.className == 'weui-uploader__file'||target.className == 'weui-uploader__file weui-uploader__file_status'){
+                    var url = target.style.backgroundImage.replace('"','').replace('"','');
+                    //var id = target.getAttribute('picid');
+                    url = url.slice(4,url.length-1);
+                    var gallery = weui.gallery(url, {
+                        className: 'file',
+                        onDelete: function(){
+                            weui.confirm(
+                                '确定删除该图片？',
+                                function(){
+                                    if (type) {
+                                        vm.uploadCount[type] --;
+                                    }
+//                                    console.log(vm.uploadCount[num][type],'bb')
+                                    $(target).remove();
+                                });
+                            gallery.hide();
+                        }
+                    });
+                }
+            },
+            //完成协助
+            postInfo:function(){
+                var tips = 0;
+                $('.weui-uploader__files').each(function(){
+                    if($(this).find('li').length==0){
+                        weui.alert('每一项至少上传一张照片!');
+                        return false;
+                    }else {
+                        tips++;
+                    }
+                });
+                /*//console.log($('.weui-uploader__files').length-1);
+                //console.log(tips);*/
+                if(tips==$('.weui-uploader__files').length){
+                    $('.fill_box').find('.weui-uploader__bd').each(function(index){
+                        vm.fileds[index] = vm.fileds[index]+'#';
+                        var $index = index;
+                        $(this).find('li').each(function(){
+                            vm.fileds[$index] += ($(this).attr('picUrl')+',');
+                        });
+                        //vm.fileds[index].substring(0,vm.fileds[index].length-1);
+                        ////console.log(vm.fileds[index]+$(this).find('li').attr('picid'));
+                    });
+                    var fields_url = '';
+                    for(var i=0;i<vm.fileds.length;i++){
+                        fields_url +=(vm.fileds[i].substring(0,vm.fileds[i].length-1)+';')
+                    }
+                    console.log({"id":Number(assist_id),"fields":fields_url.substring(0,fields_url.length-1)})
+                    $.ajax({
+                        url:cmnUrl + '/v1/cmn/assist/finish',
+                        type:'post',
+                        data:JSON.stringify({"id":Number(assist_id),"fields":fields_url.substring(0,fields_url.length-1)}),
+//                        data:JSON.stringify({"id":14,"fields":"front_image_urls#http://test.jubao56.com/res/image.jpg,http://test.jubao56.com/res/image.jpg;inside_image_urls#http://test.jubao56.com/res/image.jpg;fire_device_image_urls#http://test.jubao56.com/res/image.jpg"}),
+                        beforeSend: function(data){
+                            if(data.readyState == 0){
+                                weui.loading('loading');
+                            }
+                        },
+                        success:function(data){
+//                            if(data.err_code==1002){
+//                                weui.alert('已经完成协助，无需重复操作！',function(){
+//                                    window.location.href = "index.html";
+//                                });
+//                            }else{
+//                                weui.alert('上传成功!',function(){
+//                                    window.location.href = "index.html";
+//                                })
+//                            }
+//                            alert(data.err_code)
+                            if(data.err_code==0){
+                                weui.alert('上传成功!',function(){
+                                    window.location.href = "index.html";
+                                })
+                            }else if(data.err_code==1002){
+                                weui.alert('已经完成协助，无需重复操作！',function(){
+                                    window.location.href = "index.html";
+                                });
+                            }else {
+                                weui.alert('错误代码'+data.err_code,function(){
+
+                                });
+                            }
+                        },
+                        complete: function(data){
+                            if(data.status == 200){
+                                weui.loading('loading').hide();
+                            }
+                            vm.fileds = [];  //清空数组
+                        },
+                    })
+                }
+            }
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

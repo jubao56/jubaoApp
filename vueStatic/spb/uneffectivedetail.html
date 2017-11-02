@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-未生效保单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/weui.js"></script>
+    <style>
+        .weui-cell-togglebox {
+            height: 1.7rem;
+        }
+        .weui-cell-BDinfo p {
+            position: absolute;
+            left: 0.8rem;
+            top:0.2rem;
+
+        }
+        div.info_bar.weui-cell__ft  {
+            position: absolute;
+            left: 2.45rem;
+            top:0.2rem;
+
+        }
+        p.red {
+            color:#333;
+        }
+        .weui-cell-address {
+            padding-left: 0.3rem;
+        }
+        
+        .classHide {
+            display: none;
+        }
+        .classShow {
+            display: block;
+        }
+        .weui-icon_gallery-delete { display:none;}
+    </style>
+</head>
+<body style="padding-bottom: 0.3rem">
+<div v-cloak id="fill-info">
+    <div class="top_bar">
+        <a class="back fl" href="javascript:;" @click="backPage"><img src="img/back.png"/> </a>
+        <span class="title">未生效保单</span>
+    </div>
+    <div class="for_margin"></div>
+    <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>保单目前状态:</p>
+        </div>
+        <div class="weui-cell__ft" style="color: #ff0000;">{{ order.status_text }}</div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>投保人:</p>
+        </div>
+        <div class="info_bar weui-cell__ft tover" style="width: 5.3rem">{{ order.policyholder }}</div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>被保险人:</p>
+        </div>
+        <div class="info_bar weui-cell__ft tover" style="width: 5.3rem">{{ order.beneficiary }}</div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">保单寄送地址:</label></div>
+        <div class="info_bar weui-cell__ft tover" style="width: 5.3rem">{{order.province+order.city+order.district+ order.deliver_address }}</div>
+    </div>
+    <div class="pb50">
+        <template  v-for="(shop,index) in shops">
+            <div class="switch classHide" v-bind:class="shop.b">
+                <div class="weui-cell switch-top" >
+                    <div class="weui-cell__bd">
+                        <p>商铺档口{{ index+1 }}</p>
+                    </div>
+                    <div class="weui-cell__ft"><i class="icon"></i></div>
+                </div>
+                <div class="switch-box" v-bind:class="shop.b">
+                    <div class="weui-cell weui-cell-togglebox">
+                        <div class="weui-cell__bd weui-cell-BDinfo">
+                            <p>投保方案：</p>
+                        </div>
+                        <div class="info_bar weui-cell__ft ">
+                            <p class="red">保险金额{{ shop.coverage }}万元</p>
+                            <p class="tip">（固定资产{{ shop.gdzc }}万+临时存货{{ shop.lsch }}万）</p>
+                            <p class="red">附加商铺租金损失保险200元/天</p>
+                            <p class="tip">（最长90天）</p>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p class="weui-cell-address">档口地址：</p>
+                        </div>
+                        <div class="info_bar weui-cell__ft ">
+                            <p class="tip tover" style="width: 4.5rem; line-height:2;">{{shop.province+shop.city+shop.district+ shop.address }}</p>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <div class="weui-uploader">
+                                <div class="weui-uploader__hd">
+                                    <p class="weui-cell-address">档口图片</p>
+                                </div>
+                                <div class="weui-uploader__bd">
+                                    <ul class="weui-uploader__files">
+                                        <li @click="imgGallery(showImg(img))" class="weui-uploader__file" v-for="img in shop.images" v-bind:style="{ backgroundImage: 'url('+showImg(img)+')', fontSize: 5 + 'px' }"
+                                        ></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+    <div class=" send_help_btn classHide" v-bind:class="button.button_if">
+        <a class="weui-btn weui-btn_primary" @click="goNext">{{ button.button_text }}</a>
+    </div>
+</div>
+
+</body>
+<script>
+    if(!getToken()){
+        window.location.href = 'login.html';
+    }
+    $(function(){
+        $('.send_help_btn .weui-btn_primary').click(function(){
+            $('.weui-dialog,.weui-mask').show();
+        });
+        $('.weui-dialog__btn_primary').click(function(){
+            $('.weui-dialog,.weui-mask').hide();
+        });
+        //收起
+        $('.switch-top').click(function(){
+            $(this).find('.icon').toggleClass('on');
+            $(this).siblings('.switch-box').toggle();
+        });
+    })
+</script>
+<script type="text/javascript">
+    var order_id = window.location.href.substring(window.location.href.indexOf("?")+1,window.location.href.length);
+    var token =getToken();
+    //console.log("token:"+token);
+    //console.log("order_id:"+order_id);
+    var vm = new Vue({
+        el: '#fill-info',
+        data: {
+            order:{},
+            shops:[],
+            button:{button_if:'',button_href:'',button_text:''}
+        },
+        methods: {
+            showImg:function(img){
+                return img.replace(/\\/g,"/").replace(/\s/g,"%20").replace(/\(/g,"%28").replace(/\)/g,"%29")
+            },
+            //初始化加载
+            getIniInfo:function(){
+                $.ajax({
+                    url: spbUrl + '/v1/spb/order/info',
+                    type: 'get',
+                    headers: {'Authorization':'Bearer ' + token},
+                    data:{"id": order_id},
+                    beforeSend: function(data){
+                        if(data.readyState == 0){
+                            weui.loading('loading');
+                        }
+                    },
+                    success:function(data){
+                        //console.log(data.data);
+
+                        var order = {};
+                        var button = {};
+                        //order.id = data.data[i].id;
+                        order.policyholder = data.data.policyholder;
+                        order.beneficiary = data.data.beneficiary;
+                        order.deliver_address = data.data.deliver_address;
+                        order.province = data.data.province;
+                        order.city = data.data.city;
+                        order.district = data.data.district;
+                        order.status = data.data.status;
+                        order.updated_at = data.data.updated_at;
+                        if(data.data.status == 1) {
+                            button.button_if = 'classShow';
+                            order.status_text = '待上传资料';
+                            button.button_text ='继续上传资料' ;
+                            button.button_href = 'insured-fix.html?'+data.data.id;
+                        } else if(data.data.status == 2) {
+                            order.status_text = '请上传投保单';
+                            button.button_if = 'classShow';
+                            button.button_text ='上传投保单' ;
+                            button.button_href = 'uploadform.html?'+data.data.id;
+                        } else if(data.data.status == 4) {
+                            order.status_text = '待审核';
+                        } else if(data.data.status == 8) {
+                            order.status_text = '待支付';
+                            button.button_if = 'classShow';
+                            button.button_text ='立即支付' ;
+                            button.button_href = 'pay.html?'+data.data.id ;
+                        } else if(data.data.status == 32) {
+                            order.status_text = '已上传支付凭证，待审核';
+                        } else if(data.data.status == 64) {
+                            order.status_text = '支付凭证审核失败';
+                            button.button_if = 'classShow';
+                            button.button_text ='重新上传支付凭证' ;
+                            button.button_href = 'upload-payoffline.html?'+data.data.id ;
+                        } else if(data.data.status == 128) {
+                            order.status_text = '已确认支付，待出单';
+//                            button.button_if = 'classShow';
+//                            button.button_text ='需要加保' ;
+//                            button.button_href = 'upload-payoffline.html?'+data.data.id ;
+                        }
+                         //console.log(button);
+                        vm.order = order;
+                        vm.button = button;
+
+                        //遍历当前订单中的shops数组中的shop；
+                        for(var j=0; j < data.data.shops.length; j++){
+                            var shop = {};
+                            shop.coverage = data.data.shops[j].coverage/10000;
+                            shop.gdzc = data.data.shops[j].coverage/50000;//固定资产
+                            shop.lsch = data.data.shops[j].coverage/12500;//临时存货
+                            shop.address = data.data.shops[j].address;
+                            shop.province = data.data.shops[j].province;
+                            shop.city = data.data.shops[j].city;
+                            shop.district = data.data.shops[j].district;
+                            shop.images = (function(){
+                                var frontArr=[], insideArr=[], fireArr=[], imagesArr=[];
+                                for(var x in data.data.shops[j].front_image_urls){
+                                    console.log(data.data.shops[j].front_image_urls[x])
+                                    frontArr.push(data.data.shops[j].front_image_urls[x])
+                                }
+                                for(var y in data.data.shops[j].inside_image_urls){
+                                    insideArr.push(data.data.shops[j].inside_image_urls[y])
+                                }
+                                for(var z in data.data.shops[j].fire_device_image_urls){
+                                    fireArr.push(data.data.shops[j].fire_device_image_urls[z])
+                                }
+
+                                imagesArr = frontArr.concat(insideArr.concat(fireArr));
+                                console.log(imagesArr)
+                                return imagesArr;
+                            })();
+                            shop.b = "classShow";
+                            shop.a = "classHide";
+                            vm.shops.push(shop);
+                        }
+                        console.log(vm.shops)
+                    },
+                    complete: function(data){
+                        if(data.status == 200){
+                            weui.loading('loading').hide();
+                        }
+                    },
+                })
+            },
+           /* show_detail:function (index) {
+                if(this.wsxOrder[index].a =="classHide"){
+                    this.wsxOrder[index].a = 'classShow';
+
+                }else{
+                    this.wsxOrder[index].a = 'classHide';
+                }
+
+            },
+            to_detail: function (index) {
+                //console.log("id:"+this.wsxOrder[index].id);
+                //console.log("status:"+this.wsxOrder[index].status);
+            },*/
+            backPage:function() {
+                window.location.href = 'spbordersBack.html';
+            },
+            imgGallery:function(url){
+                weui.gallery(url);
+            },
+            goNext:function(){
+                $.ajax({
+                    url: spbUrl + '/v1/spb/user/info',
+                    type: 'get',
+                    headers: {'Authorization': 'Bearer ' + token},
+                    success: function (data) {
+                        if(data.err_code == 0){
+                            if(data.data.disabled){
+                                weui.alert('<p style="word-break: normal">非常抱歉，您的账户暂时无法投保“商铺保”，建议您选择其他险种，详询聚保服务热线：40080-59680。</p>', {title: '尊敬的会员'});
+                                return false
+                            }
+                        }
+                        window.location.href = vm.button.button_href;
+                    }
+                })
+            }
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

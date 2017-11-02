@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="shortcut icon" type="image/x-icon" href="./img/favicon.ico" media="screen">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta content="telephone=no" name="format-detection">
+    <title>注册</title>
+    <link rel="stylesheet" type="text/css" href="./css/base.css">
+    <link rel="stylesheet" type="text/css" href="./css/login.css">
+    <!-- <script src="//hm.baidu.com/hm.js?8dcdc46116c07356465640ba5ff004fc"></script> -->
+    <script type="text/javascript" src="./js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./js/login/myjquery.js"></script>
+    <script type="text/javascript" src="./js/login/jquery.touchSlider.js"></script>
+    <script type="text/javascript" src="./js/login/common.js"></script>
+    <script src="./js/login/regular_expression.js"></script>	
+	<script src="./js/jquery.cookie.js"></script>
+    <style>
+	    .nav{position:relative;float:left; width:100%; font-family: "Microsoft yahei"; font-size:14px; color:#828d9b; z-index: 9999;padding:0}
+	    .nav p{display:block;padding-left:10px;height:3rem;line-height:3rem;border:0.1rem #c0c0c0 solid;  border-radius: 5px; text-align: left;  font-family: "Microsoft yahei"; font-size:1rem;}
+	    .set{background:url(./img/btn_2.jpg) 98% 1.2rem no-repeat;}
+	    .select{background:url(./img/btn_1.jpg) 98% 1.2rem no-repeat;}
+	    .new{ width:99.2%;position:absolute; top:3.01rem; left:0px; border-right:0.1rem #c0c0c0 solid; border-bottom:0.1rem #c0c0c0 solid; border-left:0.1rem #c0c0c0 solid;border-radius: 5px;  display:none; z-index: 9999;  font-family: "Microsoft yahei"; font-size:0.8rem;}
+	    .nav ul li{line-height:30px;padding-left:10px; text-align: left; background: #fff;vertical-align:middle;}
+	    .nav ul li:hover{background:#39a8f8;color:#FFF;}
+    </style>
+
+
+</head>
+<body>
+	<header class="header">
+        <div class="h_top">
+            <a class="go_back" href="index.html">
+                <span>
+                    <img src="./img/back.png">
+                </span>返回首页
+            </a>
+        </div>
+    </header>
+    <article class="artic">
+        <div class="reg">
+            <div class="reg_box">
+
+                    <ul>
+                        
+                        <li style="height:1rem">&nbsp;</li>
+                        <li>
+                            <input name="phone" type="text" placeholder="手机号 填写手机号" id="phoneNumber" maxlength="11">
+                            <input id="flag_phone" value="0" type="hidden">
+                        </li>
+                        <li style="height:1rem">&nbsp;</li>
+						<li>
+                            <input name="code" id="captcha" type="text" placeholder="图形验证码" style="width:40%;float:left;" maxlength="5">
+							 <img style="cursor:pointer; width:42%;height:3rem;float:right;" id="captcha_img" src="">
+                            <input type="hidden" id="captchaid" value="A2Eyj8B0HcETangYDiwO">
+                        </li>
+                        <li style="height:1rem">&nbsp;</li>
+                        <li>
+                            <input name="code" id="code" type="text" placeholder="验证码" style="width:40%;" maxlength="6">
+                            <input type="hidden" id="flag_code" value="-1">
+                            <a style="background:url(./img/bao_bg2.png) no-repeat center center; background-size:100% 100%;display:inline-block; width:42%; height:3rem; line-height:3rem; font-family:'Microsoft YaHei'; color:#fff; text-align:center; margin:0 4% ;float:right" href="javascript:void(0);" id="reg_validCode">获取验证码</a>
+                        </li>
+                        <li style="height:1rem">&nbsp;<input type="hidden" id="code_hid" value="-1"></li>
+                        <li><input name="password" id="reg_password" type="password" placeholder="密码  6-16位,必须包含数字,字母." maxlength="30"></li>
+						<li>
+							<input style="width:1rem; height:1rem;" type="checkbox" id="togglePassword">
+							<label for="togglePassword">显示密码</label>
+						</li>
+						<li style="height:1rem">&nbsp;</li>
+						<li><input name="password" id="re_pwd" type="password" placeholder="确认密码  6-16位,必须包含数字,字母." maxlength="30"></li>
+                        <li style="text-align:right;font-size:1rem;">
+                            <input name="agree" id="ck_server" type="checkbox" style="width:1.3rem">
+                            <a href="protocol.html" style="color: red;">我已阅读并接受聚保平台服务协议</a>
+                        </li>
+                    </ul>
+                    <div style="height:1.26rem;">
+                        <span id="span_tip" style="color: red; background: url(&quot;./img/L_tips.png&quot;) left center no-repeat; padding-left: 1.26rem;" hidden>密码：必须输入项.</span>
+                    </div>
+                    <input class="zc_but" name="" type="submit" value="注册" onclick="register()">
+
+                    
+
+                <p class="copyright">©聚保平台</p>
+            </div>
+        </div>
+    </article>
+    <script type="text/javascript">
+		$(function () {
+            $.post(cmnUrl + "/v1/cmn/captcha/new", function(r) {
+                $('#captcha_img').attr("src", cmnUrl + "/v1/cmn/captcha/" + r.data.captcha_id + ".png");
+                $("#captchaid").val(r.data.captcha_id);
+            });
+            $('#captcha_img').on('click', function(evt){
+                evt.preventDefault();
+                $.post(cmnUrl + "/v1/cmn/captcha/new", function(r) {
+                    $('#captcha_img').attr("src", cmnUrl + "/v1/cmn/captcha/" + r.data.captcha_id + ".png");
+                    $("#captchaid").val(r.data.captcha_id);
+                });
+            });
+            var index = 60;
+            $("#code").keyup(function () {
+                var code = $.trim($(this).val());
+                if (code.toString().length != 6) {
+                    return false;
+                }
+                if (check_phone($("#phoneNumber"), $("#span_tip")) != 0) {
+                    return false;
+                }
+                $("#span_tip").html("").hide();
+                var phone = $("#phoneNumber").val();
+                
+                $.ajax({
+                    url: cmnUrl + "/v1/cmn/sms/verify",
+                    type: "POST",
+                    data: JSON.stringify({ mobile: phone, sms_code: code }),
+                    success: function (r) {
+                        /*if (r.extra != $("#code").val()) {
+                            return
+                        }*/
+                        if (r.data.result) {
+                            $("#flag_code").val("1");
+                            $("#span_tip").html("").hide();
+                        } else {
+                            $("#flag_code").val("-1");
+                            $("#span_tip").html("验证码错误.").show();
+                        }
+                    },
+                    error: function (e, xtr) {
+                        alert(xtr.responseText);
+                    }
+                });
+            });
+
+            $("#reg_validCode").click(function () {
+                
+                if ($(this).html() != "获取验证码") {
+                    return false;
+                }
+                if (check_phone($("#phoneNumber"), $("#span_tip")) != 0) {
+                    return false;
+                }
+				if($('#captcha').val().length==0){
+					alert('请输入图形验证码');
+					$('#captcha').focus();
+					return false;
+				}
+                $("#span_tip").html("").hide();
+                var phone = $("#phoneNumber").val();
+                
+                
+                $.ajax({
+                    url: cmnUrl + "/v1/cmn/sms/send",
+                    type: "post",
+                    data: JSON.stringify({mobile: phone, captcha_id: $("#captchaid").val(), captcha_code: $("#captcha").val()}),
+                    success: function (r) {
+                        if (r.err_code == 0) {
+
+                        } else {
+                            alert("验证码获取失败，请重试.");
+                            $("#reg_validCode").html("获取验证码");
+                            window.clearInterval(reg_validBtn);
+                            index = 60;
+                        }
+                    }
+                });
+
+                var reg_validBtn = setInterval(function () {
+                    $("#reg_validCode").html("获取验证码(" + (--index) + ")").attr("disable",true);
+                    if (index == 0) {
+                        $("#reg_validCode").html("获取验证码");
+                        window.clearInterval(reg_validBtn);
+                        index = 60;
+                    }
+                }, 1000);
+            });
+            
+            
+            
+        });
+	</script>
+	<script>
+        var reg_phone = /^(0|86|17951)?(13[0-9]|15[012356789]|17[0-9]|18[0-9]|14[57])[0-9]{8}$/;
+        var reg_pwd = /^(?=.*?[a-zA-Z])(?=.*?[0-9])[!"#$%&'()*+,\-./:;<=>?@@\[\\\]^_`{|}~A-Za-z0-9]{6,16}$/;
+        $(function () {
+            $("#phoneNumber").blur(function () {
+                check_phone($(this), $("#span_tip"))
+            });
+
+            $("#reg_password").focus(function () {
+                if ($.trim($(this).val()) != $.trim($("#re_pwd").val())) {
+                    $(this).val("");
+                    $("#re_pwd").val("");
+                    $("#span_tip").html("").hide();
+                }
+            });
+
+            $("#reg_password").blur(function () {
+                check_pwd($(this), $("#span_tip"));
+            });
+
+            $("#re_pwd").blur(function () {
+                if ( $.trim($(this).val()) != $.trim($("#reg_password").val()) ) {
+                    $("#span_tip").html("两次输入的密码不一致.").show();
+                } else {
+                    check_pwd($("#reg_password"), $("#span_tip"));
+                }
+            });
+            $("#ck_server").change(function () {
+                if ($(this).prop("checked")) {
+                    $("#ck_server").next().css("color", "");
+                }
+                else
+                    $("#ck_server").next().css("color", "red");
+            });
+        });
+
+        function check_pwd(obj, tip) {
+            if ($.trim($(obj).val()) == "") {
+                $(tip).html("密码：必须输入项.").show();
+                return -1;
+            } else if (!reg_pwd.test($(obj).val())) {
+                $(tip).html("密码：必须包含数字、字母，并不含特殊字符及空格.").show();
+                return -2;
+            }
+            $(tip).html("").hide();
+            return 0;
+        }
+
+        function check_phone(obj, tip) {
+            if ($.trim($(obj).val()) == "") {
+                $(tip).html("必须输入项.").show();
+                return -1;
+            } else if (!reg_phone.test($(obj).val())) {
+                $(tip).html("格式不正确.").show();
+                return -2;
+            } else {
+                return 0;
+            }
+		}
+		$.getUrlParam = function (name) {  
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");  
+                var r = window.location.search.substr(1).match(reg);  
+                if (r != null) return unescape(r[2]); return null;  
+            }  
+
+		function register() {
+			/*if ($("#channel").val() == "") {
+				alert('请选择渠道');
+				return;
+			}*/
+			var flag = $("#flag_code").val();
+			if (flag == -1) {
+				$("#span_tip").html("验证码错误.").show();
+				return false;
+			}else {
+                $("#span_tip").html("").hide();
+          }
+            if ( $.trim($('#re_pwd').val()) != $.trim($("#reg_password").val()) ) {
+                $("#span_tip").html("两次输入的密码不一致.").show();
+                return false;
+            } else {
+                check_pwd($("#reg_password"), $("#span_tip"));
+            }
+
+			var data = {};
+			var phone_validate = check_phone($("#phoneNumber"), $("#span_tip"));
+			var pwd_validate = check_pwd($("#reg_password"), $("#span_tip"));
+
+			//data["channel_id"] = "5847b976-c672-11e5-b848-00163e0008c2";
+
+            if (!$("#ck_server").prop("checked")) {
+                $("#span_tip").html("请阅读注册协议.").show();
+                return false;
+            }
+
+			if (phone_validate != 0 || pwd_validate != 0 || !$("#ck_server").prop("checked")) {
+				return false;
+			}
+
+			data["mobile"] = $.trim($("#phoneNumber").val());
+			data["password"] = $.trim($("#reg_password").val());
+			// data["type"] = $.getUrlParam("type");
+            data["sms_code"] = $.trim($("#code").val())
+			
+			$.ajax({
+				url: cmnUrl + "/v1/cmn/user/register",
+				type: 'POST',
+				data: JSON.stringify(data),
+				success: function (r) {
+                    var err_code = r.err_code;
+					if (err_code === 0) {
+                        setCookie('jubao_user',r.data.access_token,{expires: 4});
+						location.href = 'home.html';
+					} else if(err_code === 1006) {
+						/*if (r.message.length > 0) {
+							alert(r.message)
+						} else {*/
+							$("#span_tip").html("您的手机验证码错误，请重试").show();
+						// }
+					}else if(err_code === 1007){
+                        $("#span_tip").html("您的手机账号已经注册过，请直接登录或者找回密码").show();
+                    }
+				},
+				error: function (e, xtr) {
+					
+				}
+			});
+		}
+
+        
+        function clear() {
+            $("#phoneNumber").val("");
+            $("#reg_password").val("");
+            $("#code").val("");
+            $("#re_pwd").val("");
+            $("#ck_server").prop("checked", false)
+        }
+		
+
+    </script>
+    <script type="text/javascript" src="./js/login/jquery.toggle-password.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#reg_password').togglePassword({
+                el: '#togglePassword'
+            });
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-未生效保单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+    <style>
+        .classShow {
+            display: block;
+        }
+        .classHide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div v-cloak id="failOrder">
+    <div class="top_bar">
+        <a class="back fl" href="home.html" ><img src="img/back.png"/> </a>
+        <span class="title">未生效保单</span>
+    </div>
+    <div class="for_margin"></div>
+    <template  v-for="(order,index) in wsxOrder">
+        <div class="switch classShow" >
+            <div class="weui-cell switch-top" @click="show_detail(index)">
+                <div class="weui-cell__bd">
+                    <p>保单{{ index + 1 }}</p>
+                </div>
+                <div class="weui-cell__ft"><b>{{ order.updated_at.replace('T','&nbsp&nbsp&nbsp').replace('+08:00','') }}</b><a class="link_btn" href="javascript:;" v-on:click.stop="to_detail(index)" style="width: 1.5rem;">查看详情</a> </div>
+            </div>
+            <div class="switch-box dn"  v-bind:class="order.b">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>被保险人:</p>
+                    </div>
+                    <div class="info_bar weui-cell__ft tover" style="width: 5rem">{{ order.beneficiary }}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>寄送地址：</p>
+                    </div>
+                    <div class="info_bar weui-cell__ft ">
+                        <p class=" tover" style="width: 5rem">{{order.province+order.city+order.district+order.deliver_address }}</p>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>保单状态：</p>
+                    </div>
+                    <div class="info_bar weui-cell__ft tover" style="width: 5rem">{{ order.status_text }}</div>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+</body>
+<script>
+    if(!getToken()){
+        window.location.href = 'login.html';
+    }
+    var token = getToken();
+    //console.log("token:"+token);
+    var vm = new Vue({
+        el: '#failOrder',
+        data: {
+            wsxOrder:[],
+        },
+        computed: {
+            status: function(){return 'test'}
+        },
+        methods: {
+            //初始化加载
+            getIniInfo:function(){
+                $.ajax({
+                    url: spbUrl + '/v1/spb/order/list',
+                    type: 'get',
+                    headers: {'Authorization':'Bearer ' + token},
+                    data:{"rows":128},
+                    success: function(data){
+                        //console.log(data.rows);
+                        for (var i = 0; i < data.rows.length; i++) {
+                            if(data.rows[i].status < 256 && data.rows[i].status != 16 ){   //未生效保单
+                                //console.log(data.rows[i].beneficiary);
+                                var order = {};
+                                order.id = data.rows[i].id;
+                                order.beneficiary = data.rows[i].beneficiary;
+                                order.deliver_address = data.rows[i].deliver_address;
+                                order.status = data.rows[i].status;
+                                order.updated_at = data.rows[i].updated_at;
+                                order.province = data.rows[i].province;
+                                order.city = data.rows[i].city;
+                                order.district = data.rows[i].district;
+                                order.b = "classShow";
+                                order.a = "classHide";
+                                if(order.status == 1) {
+                                    order.status_text = '待上传资料';
+                                } else if(order.status == 2) {
+                                    order.status_text = '请上传投保单';
+                                } else if(order.status == 4) {
+                                    order.status_text = '待审核';
+                                } else if(order.status == 8) {
+                                    order.status_text = '待支付';
+                                } else if(order.status == 32) {
+                                    order.status_text = '已上传支付凭证，待审核';
+                                } else if(order.status == 64) {
+                                    order.status_text = '支付凭证审核失败';
+                                } else if(order.status == 128) {
+                                    order.status_text = '已确认支付，待出单';
+                                }
+                                vm.wsxOrder.push(order);
+                            }
+                        }
+                        //console.log(JSON.stringify(vm.wsxOrder));
+                    }
+                })
+            },
+            show_detail:function (index) {
+                if(this.wsxOrder[index].b =="classHide"){
+                    this.wsxOrder[index].b = 'classShow';
+
+                }else{
+                    this.wsxOrder[index].b = 'classHide';
+                }
+
+            },
+            to_detail: function (index) {
+                //console.log("id:"+this.wsxOrder[index].id);
+                //console.log("status:"+this.wsxOrder[index].status);
+                id = this.wsxOrder[index].id;
+                window.location.href = "uneffectivedetail.html?"+id;
+            }
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设置服务人员</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/weui.min.js"></script>
+    <style>
+        .searchResults{background: #fff;z-index: 1;height: 230px; box-shadow: 1px 1px 1px 0px #ccc;}
+        .searchResults,.notFound{top: 0.8rem;position:absolute;}
+        .notFound {margin-top: 8px;}
+        .searchResults>div {
+            text-align: center;
+            height: 30px;
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            right: 0;
+            line-height: 30px;
+        }
+        .weui-btn_disabled.weui-btn_primary {
+            background-color: #1aad19;
+            color: #fff;
+        }
+        .placeholder::-webkit-input-placeholder { /* WebKit browsers */
+            color:#ddd;
+        }
+        .placeholder:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            color:#ddd;
+        }
+        .placeholder::-moz-placeholder { /* Mozilla Firefox 19+ */
+            color:#ddd;
+        }
+        .placeholder:-ms-input-placeholder { /* Internet Explorer 10+ */
+            color:#ddd;
+        }
+    </style>
+</head>
+<body style="background: #f5f5f5">
+<div class="box">
+    <div class="top_bar">
+        <a class="back fl" :href="userHref" ><img src="img/back.png"/> </a>
+        <span class="title">设置服务人员</span>
+    </div>
+    <div class="weui-cells" style="background: #fff; height: 10rem; padding-top: 1.2rem">
+        <div style="padding: 10px 15px 10px 15px;" class="weui-cell">
+            <!--<div class="weui-cell__hd"  ><label class="weui-label" style="width: 2.2rem;">商铺保渠道:</label></div>-->
+            <!--<div class="weui-cell__bd">-->
+                <!--<input class="weui-input" v-model="name" :value="name" :disabled="yes"  placeholder="请输入渠道名称">-->
+            <!--</div>-->
+            <div class="clearfix" style="position:relative;width:90%;margin: 0 auto;" v-if="!channelName">
+                <input style="width: 70%;float:left;height: 0.7rem;border: 1px solid #eaeaea;padding-left: 10px;border-radius:8px;" class="txt placeholder" name="channel_name" id="reg_channel" type="text" :placeholder="placeholder" @blur="inputTest" v-model.trim="setChannel">
+                <input style="width: 20%;float:right;height: 0.7rem;padding: 0 2%;border-radius: 0.15rem;background:#3c93e8;color:#fff;" type="button" value="搜索" id="search" @click="searchChannel()">
+                <div class="searchResults" v-show="resultsData.length!=0">
+                    <ul style="border: 1px solid #dadada;width: 280px;height:200px;overflow-y: scroll;">
+                        <li v-for="item in resultsData" v-text="item.realname" style="padding: 3px 0 3px 10px;" @click="selectedChannel(item)"></li>
+                    </ul>
+                    <div @click="resultsData = []">关闭</div>
+                </div>
+                <div class="notFound" style="display:none;color:red;">很抱歉,没有匹配到服务机构或服务人员!</div>
+            </div>
+            <div v-if="channelName" style="text-align:center;width: 100%;">
+                <p style="font-size: 0.45rem;"><span><b style="font-weight: bold !important;">{{channelName}}</b> 为您服务</span></p>
+                <p style="text-align: left;padding: 15px 0 0 30px;">
+                    <span>如果信息有误,请拨打我公司服务热线:</span><br>
+                    <span>40080-59680</span>
+                </p>
+            </div>
+        </div>
+        <div class="weui-cell" style="padding-top: 0.5rem">
+            <a  style="width: 60%" href="javascript:;" v-bind:class="{'dni':channelName}" @click="fillChannel" class="weui-btn weui-btn_primary">确认</a>
+            <a  style="width: 60%" href="javascript:;" v-bind:class="{'dni':!channelName}" @click="goBack()" class="weui-btn weui-btn_disabled weui-btn_primary">下一步</a>
+        </div>
+        <p style="text-align: center; margin-top:0.8rem;color: #cacaca;font-size: 12px;" class="copyright">©聚保平台</p>
+    </div>
+</div>
+</body>
+<script>
+    if(!getToken()){
+//        window.location.href = 'login.html';
+        window.location.href = backUrl+'/#/login';
+    }
+    var token = getToken();
+    var vm = new Vue({
+        el:'.box',
+        data:{
+            channelName: "", // 如果有渠道时显示
+            name:'',
+            yes:false,
+            placeholder: '请输入您的服务机构或服务人员',
+            channel: '', // 渠道
+            setChannel: '', // input数据渠道筛选字符
+            channelData: [], // 渠道数据数组
+            resultsData: [],  // 搜索匹配结果数组
+            selectedDate: [], // 选中数据数组
+            backUrl:backUrl,
+            userHref:userHref
+        },
+        methods:{
+            initInfo:function(){
+                $.ajax({
+                    url:spbUrl+'/v1/spb/user/info',
+                    type:'get',
+                    headers:{'Authorization':'Bearer ' + token},
+                    beforeSend: function(data){
+                        if(data.readyState == 0){
+                            weui.loading('loading');
+                        }
+                    },
+                    success:function(data){
+                        if(data.err_code == 1010){
+                            console.log("整车保用户不存在,请注册");
+                            vm.yes = true;
+                            vm.loadChannelList();
+                        }else if(data.err_code == 0){
+                            console.log("整车保用户存在",data);
+                            vm.yes = true;
+                            vm.channelName = data.data.channel_name;
+                        }
+                    },
+                    complete: function(data){
+                        //数据加载成功之后，loading 隐藏
+                        if(data.status == 200){
+                            weui.loading('loading').hide();
+                        }
+                    },
+                    err: function(err){
+                        console.log(err);
+                    }
+                })
+//                初始化时添加没有渠道的字段
+                this.setStorage();
+            },
+            // 获取渠道列表
+            loadChannelList:function(){
+                $.ajax({
+                    url:cmnUrl + "/v1/cmn/channel/list",
+                    type:'get',
+                    headers:{'Authorization':'Bearer ' + token},
+                    success:function(data){
+                        console.log(data);
+                        vm.channelData = data.data;
+                    }
+                })
+            },
+            // 通过下拉菜单选择渠道
+            selectedChannel: function(item){
+                vm.resultsData = [];
+                vm.setChannel = item.realname;
+                vm.selectedDate = item;
+            },
+            // 搜索渠道
+            searchChannel: function(){
+                if(self.placeholder == '请输入您的服务机构或服务人员' && self.setChannel == ''){
+                    weui.toast('请先通过查询选择服务机构或人员!');
+                    return;
+                }else{
+                    vm.resultsData = [];
+                    vm.resultsData = vm.channelData.filter(function(item){
+                        return item.realname.match(vm.setChannel);
+                    })
+                    console.log(vm.resultsData);
+                    if(vm.resultsData.length == 0){
+                        vm.resultsData = [];
+                        document.querySelector('.notFound').style.display = 'block';
+                        setTimeout(function(){
+                            document.querySelector('.notFound').style.display = 'none';
+                        },2000)
+                    }
+                }
+            },
+            inputTest:function(){
+//                var data = this.channelData.filter((item)=>{
+//                    return item.realname == this.setChannel;
+//                })
+//                if(data.length == 1){
+//                    this.selectedDate = data[0];
+//                    weui.toast('渠道输入正确!');
+//                }else if(data.length != 1){
+//                    weui.toast('请先通过查询选择唯一渠道!');
+//                    return;
+//                }
+            },
+            // 选择渠道后创建商铺保用户
+            fillChannel: function(){
+                var _this = this;
+                var data = this.channelData.filter(function(item){
+                    return item.realname == _this.setChannel;
+                })
+
+                if(data.length == 1){
+                    this.selectedDate = data[0];
+                }else if(data.length > 1){
+                    weui.toast('请先通过查询选择唯一服务机构或人员!');
+                    return;
+                }
+                if(this.selectedDate.id && this.setChannel !== this.selectedDate.realname){
+                    this.selectedDate = {};
+                    this.fillChannel();
+                }else if(this.selectedDate.id == undefined && this.setChannel==""){
+                    this.selectedDate.id = 2208;
+                    this.selectedDate.realname = "聚保";
+                    add();
+                }else if(vm.selectedDate.id == undefined && vm.setChannel!=""){
+                    weui.toast('请先通过查询选择服务机构或人员!');
+                    return;
+                }else {
+                    add();
+                }
+                function add(){
+                    $.ajax({
+                        url:spbUrl +'/v1/spb/user/register',
+                        type:'post',
+                        headers:{'Authorization':'Bearer ' + token},
+                        data:JSON.stringify({"channel_id":vm.selectedDate.id}),
+                        success:function(data){
+                            vm.channelName = vm.selectedDate.realname;
+                            weui.toast('设置成功！')
+                            window.sessionStorage.setItem("havaChannel",null);
+                        }
+                    })
+                }
+            },
+            goBack(){
+                window.location.href = backUrl+"/#/dashboard";
+            },
+            setStorage(){
+//                let key ="jubao56";
+//                let jubaoStorage =  JSON.parse(window.sessionStorage.getItem(key));
+//                jubaoStorage=jubaoStorage==null?{}:jubaoStorage;
+//                for(let i in message){
+//                    jubaoStorage[i]=message[i]
+//                }
+                window.sessionStorage.setItem("havaChannel","tiao");
+            },
+        },
+    });
+    vm.initInfo();
+</script>
+</html>

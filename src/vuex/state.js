@@ -18,10 +18,10 @@ let fileUrl = "http://test.jubao56.com"; //文件上传地址
 let redirectUrl = "http://test.jubao56.com/m/#/"; //太平支付的重定向地址
 
 
-let spbBackUrl = "http://test.jubao56.com/spb/"; //跳转至商铺保页面
-if(location.hostname.indexOf("localhost") != -1){
-  spbBackUrl="http://localhost:63342/spb/spbprod/";
-}
+let spbBackUrl = "vueStatic/spb/"; //跳转至商铺保页面
+// if(location.hostname.indexOf("localhost") != -1){
+//   spbBackUrl="http://localhost:63342/spb/spbprod/";
+// }
 
 let isWWW = false;
 
@@ -34,7 +34,7 @@ if (wwwJudge()) {//包含www 或者是以jubao56.com开头字样均会调用www
     declareUrl = "https://www.jubao56.com"; //申报业务
     fileUrl = "https://www.jubao56.com"; //文件上传地址
     redirectUrl = "http://www.jubao56.com/m/#/"; //太平支付的重定向地址
-    spbBackUrl = "http://www.jubao56.com/spb/";
+    // spbBackUrl = "http://www.jubao56.com/spb/";
     isWWW = true; // 是否是正式环境
 }
 
