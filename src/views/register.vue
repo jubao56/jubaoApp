@@ -52,6 +52,7 @@
     import { Toast,MessageBox} from 'mint-ui';
     import {cmnCaptchaNew,cmnSmsSend,cmnUserRegister} from "../libs/api"
     import NewHead from '../components/NewHead.vue'
+    import {setPlusStorage} from '../libs/common'
     export default {
         components:{
           "new-head":NewHead,
@@ -214,7 +215,8 @@
                         }else if(res.err_code==0){
                             MessageBox.alert('注册成功').then(action => {
 //                                console.log(res,'222')
-                                this.setCookie(this.$store.state.jubao_user,res.data.access_token);
+                                setPlusStorage('token',res.data.access_token,30*24)
+//                                this.setCookie(this.$store.state.jubao_user,res.data.access_token);
                                 this.$router.push("/dashboard")
                             });
                         }else {
