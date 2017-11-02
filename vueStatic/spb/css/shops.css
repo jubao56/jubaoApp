@@ -1,0 +1,98 @@
+/*通用*/
+html,body{ width: 7.5rem;box-sizing: border-box;overflow-x: hidden; font-family:"Microsoft Yahei";font-size: 0.3rem;color: #333;}
+b{font-weight: normal!important;}
+.fl{ float: left;}
+.fr{ float: right;}
+.dn{ display: none;}
+.dni{ display: none!important;}
+.pr{ position: relative;}
+.pa{ position: absolute;}
+.oh{ overflow: hidden;}
+.red{ color: #ff0000;}
+.c3285ff{ color: #3285ff;}
+.tc{ text-align: center;}
+.pl30{ padding-left: 0.3rem;}
+.ceb6100{ color: #eb6100;}
+.c0{ color: #000;}
+.w90{width: 90%}
+
+.tover{overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.fs24{ font-size: 0.24rem}
+.mt20{ margin-top: 0.2rem}
+.pb50{ padding-bottom: 0.5rem}
+.clearfix:after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix {display: inline-block;}
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/*user*/
+.user_header{height: 4.2rem; text-align: center; background: #3285ff;}
+.user_header img{display: inline-block; width: 1.45rem;height: 1.45rem;border-radius:100%; margin-top: 1.1rem;}
+.user_header p{ font-size: 0.34rem; color: #fff;}
+.user_nav li{width: 33.3%; float: left;text-align: center; border: 1px solid #ebebeb; height: 1.2rem; font-size: 0.3rem}
+.user_nav li span{ color: #eb8645;line-height: 0.4rem;margin-top: 0.25rem;display: block;}
+.user_nav li p{ color: #333;line-height: 0.4rem}
+.user_list{ background: #f5f5f5!important;padding-top: 1.2rem; margin-top: 0!important;}
+.user_list .switch-top{ background: #fff;}
+.user_list .switch-top p{ font-size: 14px;}
+.user_list .switch-top .weui-cell__hd img{display: block;width: .5rem;height: 0.5rem }
+.user_list .switch-box ul{ padding-left: 3%;}
+.user_list .switch-box li{width: 32%; height: 0.8rem; float: left;line-height: 0.8rem; font-size: 0.26rem; text-align: center;}
+.user_list .switch-box li a{ line-height: 0.8rem;display: inline-block}
+.user_list .switch-box li .btn{display: inline-block;width: 1.5rem; height: 0.5rem;border-radius: 5%; margin-top: 0.1rem; line-height: 0.5rem; border: 1px solid #bfbfbf; background: #d7eef9; color: #105ac8;}
+.user_list .switch{ margin-bottom: 0;}
+/*header*/
+.header{ height: 0.9rem; text-align: center; box-sizing: border-box;position: relative; border-bottom: 1px solid #272727; background: #3a495c;padding:0 0.3rem}
+.top_bar .back img{display: block; width: 0.19rem; height: 0.35rem;margin-top: 0.4rem;}
+.top_border{ height: 0.04rem;width: 7.5rem; background: #495768; border-width:0 0 0.04rem 0.04rem; position: absolute; top: 0;}
+.top_link{ width: 0.5rem; height: 0.5rem; display: block; margin-top: 0.25rem; overflow: hidden;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);}
+.top_link img,.top_logo img{ width: 100%; height: 100%; display: block;}
+.top_logo{ width: 1.75rem; display: inline-block;margin-top: 0.15rem;}
+/*顶部导航*/
+.top_bar{ height: 1.2rem; background: #3285ff; color: #fff; line-height: 1.2rem; padding: 0 0.6rem; font-size: 0.36rem; position: fixed; width: 100%; top: 0; z-index: 100;}
+.top_bar .back img{display: block; width: 0.19rem; height: 0.35rem;margin-top: 0.4rem;}
+.top_bar .title{ display: block; text-align: center; position: relative; left: -0.6rem; z-index:-1;}
+.for_margin {margin-top: 1.2rem}
+/*填写资料*/
+.switch{ font-size: 0.3rem; margin-bottom: 0.2rem}
+.switch-top{ background: #f5f5f5;}
+.switch-top .icon{background-image: url("../img/switch_icon.png"); background-repeat: no-repeat; background-position: center;display: block; width: 0.38rem; height: 0.38rem; background-size: contain;}
+.switch-top .icon.on{ background-image: url("../img/switch_iconed.png")}
+.switch-box .weui-label{width:105px}
+.business-help{width: 90%; background: linear-gradient(#fefefe,#d5d2d2); border: 2px solid #d5d2d2; color: #1a1a1a!important;}
+.main-tip{font-size: 0.2rem; line-height: 0.3rem; }
+.switch .weui-cells__title{ color: #333; font-weight: bold; font-size: 0.3rem}
+.weui-cells_checkbox{font-size: 0.3rem}
+.add_sp{ width: 0.6rem; height: 0.6rem;}
+.btn_box01{ background: #bed8ff; border: 2px solid #ebebeb; padding: 0.1rem 0;}
+.sp_btn01,.sp_btn02{ font-size: 0.3rem!important;border:1px solid #bfbfbf!important;}
+.sp_btn01{ background: linear-gradient(#d9eaf7,#a6d2f1); color: #105ac8!important;}
+.sp_btn02{ background: linear-gradient(#2a73df,#105bc8); color: #fff!important;}
+.fill_box{ padding-bottom: 0.1rem;}
+/*发送协助*/
+.send_help_btn{position: fixed; bottom: 0; left: 0; width: 100%;}
+.send_help_btn a{ background:#ead4d9; color: #db0505}
+/*确认信息*/
+.info_bar{text-align: left!important;}
+.info_bar .tip{ font-size: 0.24rem}
+/*投保单下载*/
+.down_btn{background: linear-gradient(#cadbf3,#98bbef)!important; color: #1a1a1a!important;}
+.bot_btn{position: fixed; bottom: 0; left: 0;width: 100%;}
+/*支付页*/
+.offline_tip{padding: 1em 15px!important;}
+.offline_tip .title{font-size: 0.35rem; line-height: 0.6rem}
+.offline_tip .txt{font-size: 0.25rem; line-height: 0.4rem;text-align: left;}
+/*未生效保单*/
+.link_btn{display: block; float: right; text-align: center; width: 1rem; margin-left: 0.2rem; height: 0.55rem; line-height: 0.55rem; color: #fff; background: linear-gradient(#2073e8,#5297fe); border-radius: 5px;}
+/*首页*/
+.spb_img{ display: block; width: 100%;}
+.spb_box .tip01{ font-size: 0.14rem;}
+.spb_share{position: fixed; top: 0; right: 0; z-index: 1001;}
+/*vue闪现*/
+[v-cloak]{ display: none; }
+

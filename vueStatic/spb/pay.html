@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-支付确认页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/weui.min.js"></script>
+</head>
+<body>
+<div v-cloak class="box">
+    <div class="top_bar">
+        <a class="back fl" href="javascript:;" onclick="window.history.back();"><img src="img/back.png"/> </a>
+        <span class="title">支付页</span>
+    </div>
+    <div class="for_margin"></div>
+    <div class="switch">
+        <div class="weui-cells__title">您本次投保{{shops.length}}个商铺档口，投保费用分别是：</div>
+        <template v-for="(item,index) in shops">
+            <div class="weui-cells__title">商铺档口{{index+1}}：{{item.price/100}}元</div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>档口地址:</p>
+                </div>
+                <div class="weui-cell__ft tover" style="width: 5.3rem">{{item.province+item.city+item.district+ item.address }}</div>
+            </div>
+        </template>
+
+        <!--<div class="weui-cells__title">商铺档口2：1200元</div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd">
+                <p>档口地址:</p>
+            </div>
+            <div class="weui-cell__ft tover" style="width: 5.3rem">武汉市东西湖区七雄路海峡创业城二期二栋906</div>
+        </div>-->
+        <div class="weui-cell mt20">
+            <div class="weui-cell__bd">
+                <p style="width: 4rem">您共需支付保费金额</p>
+            </div>
+            <div class="weui-cell__ft " style="color: #ff0000">¥<b >{{price/100}}.00</b></div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd">
+                <p class="fs24">产品名称</p>
+            </div>
+            <div class="weui-cell__ft red fs24">商铺档口火灾保</div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd">
+                <p class="fs24">承保公司</p>
+            </div>
+            <div class="weui-cell__ft red fs24">中国大地保险</div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd" style="min-width: 1rem">
+                <p class="fs24">被保险人</p>
+            </div>
+            <div class="weui-cell__ft red fs24 tover" >{{beneficiary}}</div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd">
+                <p class="fs24">支付方式</p>
+            </div>
+        </div>
+        <div class="weui-flex btn_box01">
+            <div class="weui-flex__item"><a href="javascript:;" @click="payOnline" class="weui-btn sp_btn01 w90 weui-btn_plain-default">在线支付</a></div>
+            <div class="weui-flex__item"><a href="javascript:;" @click="payOffline" class="weui-btn sp_btn02 w90 weui-btn_plain-default">线下支付</a></div>
+        </div>
+    </div>
+    <!--弹窗不需要，隐藏掉-->
+   <!-- <div class="weui-mask" style="display: none;"></div>
+    <div class="weui-dialog" style="display: none">
+        <div class="offline_tip weui-dialog__bd">
+            <p class="title">线下转账方式</p>
+            <p class="txt">开户行&nbsp:&nbsp中国工商银行武汉黄浦支行营业部</p>
+            <p class="txt">账&nbsp&nbsp户&nbsp :3202001629200167342</p>
+            <p class="txt">开户名&nbsp:&nbsp中国大地财产保险股份有限公司湖北分公司</p>
+        </div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:;" @click="payOffline" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+        </div>
+    </div>-->
+
+</div>
+</body>
+<script>
+    if(!getToken()){
+//        window.location.href = 'login.html';
+        window.location.href = backUrl+'/#/login';
+    }
+    //被删掉的线下支付弹窗的代码
+    /*$(function(){
+        $('.sp_btn02').click(function(){
+            $('.weui-dialog,.weui-mask').show();
+        });
+        $('.weui-dialog__btn_primary').click(function(){
+            $('.weui-dialog,.weui-mask').hide();
+        });
+    });*/
+    var token = getToken();
+    var order_id = window.location.href.substring(window.location.href.indexOf("?")+1,window.location.href.length);
+    var vm = new Vue({
+        el:'.box',
+        data:{
+            shops:[],
+            price:0,
+            beneficiary:"",
+        },
+        methods:{
+            getIniInfo:function(){
+                $.ajax({
+                    url: spbUrl + '/v1/spb/order/info',
+                    type:'get',
+                    headers:{'Authorization':'Bearer ' + token},
+                    data:{"id": order_id},
+                    beforeSend: function(data){
+                        if(data.readyState == 0){
+                            weui.loading('loading');
+                        }
+                    },
+                    success:function(data){
+                        //vm.shops = data.data;
+                        //console.log(data.data);
+                        vm.shops = data.data.shops;
+                        vm.price = data.data.price-data.data.discount;
+                        vm.beneficiary = data.data.beneficiary;
+//                        console.log(data.data.pay_price)
+                    },
+                    complete: function(data){
+                        if(data.status == 200){
+                            weui.loading('loading').hide();
+                        }
+                    },
+                })
+            },
+            payOnline:function () {
+                window.location.href = "pay-online.html?" + order_id;
+            },
+            payOffline:function () {
+                window.location.href = "upload-payoffline.html?" + order_id;
+            }
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-请求协同</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/weui.min.js"></script>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+<div class="box" id="box" v-cloak>
+    <div class="top_bar">
+        <a class="back fl" @click="back" href="javascript:;"><img src="img/back.png"/> </a>
+        <span class="title">填写协同信息</span>
+    </div>
+    <div class="weui-cell" style="margin-top: 1.2rem;">
+        <div class="weui-cell__bd">
+            <p>被保险人:</p>
+        </div>
+        <div class="weui-cell__ft tover" style="width: 5rem">{{insedPerson}}</div>
+    </div>
+    <!--<div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>档口地址:</p>
+        </div>
+        <div class="weui-cell__ft tover" style="width: 5.3rem">{{comAddress}}</div>
+    </div>-->
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">协助人电话:</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" v-model="helpPhone" value="{{helpPhone}}" placeholder="请填写协助人电话">
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>需要的照片:</p>
+        </div>
+    </div>
+    <!--<div class="weui-cells_checkbox">
+        <label class="weui-cell weui-check__label">
+            <div class="weui-cell__hd">
+                <input type="checkbox" class="weui-check" name="checkbox1" checked="checked" value="营业执照照片;license_file_id" v-model="helpPic">
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p>营业执照照片</p>
+            </div>
+        </label>
+    </div>-->
+    <div class="weui-cells_checkbox">
+        <label class="weui-cell weui-check__label">
+            <div class="weui-cell__hd">
+                <input type="checkbox" class="weui-check" name="checkbox1" checked="checked" disabled>
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p>营业执照照片</p>
+            </div>
+        </label>
+    </div>
+    <div class=" send_help_btn">
+        <a href="javascript:;" class="weui-btn weui-btn_primary" @click="postInfo">邀请协同</a>
+    </div>
+</div>
+</body>
+<script>
+    if(!getToken()){
+//        window.location.href = 'login.html';
+        window.location.href = backUrl+'/#/login'
+    }
+    var reg_phone = /^(0|86|17951)?(13[0-9]|15[012356789]|17[0-9]|18[0-9]|14[57])[0-9]{8}$/;
+    var token = getToken();
+    var info = (window.location.href.substring(window.location.href.indexOf("&")+1,window.location.href.length)).split('&');
+    var order_id = window.location.href.substring(window.location.href.indexOf("?")+1,window.location.href.indexOf("&"));
+    //console.log(info);
+    var vm = new Vue({
+        el:'#box',
+        data:{
+            insedPerson:'',
+            helpPhone:'',
+        },
+        methods:{
+            //初始化信息
+            getIniInfo:function(){
+                vm.insedPerson = decodeURI(info[0]);
+                vm.comAddress = decodeURI(info[1]);
+            },
+            //提交信息验证
+            postInfo:function(){
+                /*var title = "";
+                var id = "";
+                for(var i=0;i<vm.helpPic.length;i++){
+                    title += vm.helpPic[i].substring(0,vm.helpPic[i].indexOf(';'))+','
+                    id += vm.helpPic[i].substring(vm.helpPic[i].indexOf(';')+1,vm.helpPic[i].length)+','
+                }*/
+                var title = "营业执照照片";
+                var url = "license_file_url-1";
+                if(vm.helpPhone.length==0){
+                    weui.alert('请输入协助人电话！');
+                }else if(!reg_phone.test(vm.helpPhone)){
+                    weui.alert('请输入正确协助人电话！');
+                }else {
+                    $.ajax({
+                        url: cmnUrl + '/v1/cmn/assist/invite',
+                        type:'post',
+                        headers:{'Authorization':'Bearer ' + token},
+                        data:JSON.stringify({
+                            "entity":"company",//数据库表名称
+                            "entity_id":Number(info[2]),//数据库对应的id
+                            "description":title,
+                            "fields":url,
+                            "content":"被保险人:"+vm.insedPerson,
+                            "operator":info[1],//邀请人手机号
+                            "invitee":vm.helpPhone}),//被邀请人手机号
+                        beforeSend: function(data){
+                            if(data.readyState == 0){
+                                weui.loading('loading');
+                            }
+                        },
+                        success: function(data){
+                            //console.log()
+                        },
+                        complete: function(data){
+                            if(data.status == 200){
+                                weui.loading('loading').hide();
+                            }
+                            weui.alert('协助信息已发送！请确认协助成功后再点击我的保单进行下一步操作，以免覆盖协助上传的照片！',function(){
+//                                window.location.href="insured-fix.html"+'?'+ order_id;
+//                                window.location.href = backUrl + '#/userBack'
+                                window.location.href = userHref
+                            });
+                        },
+                    })
+                }
+            },
+            //返回
+            back:function(){
+                window.location.href = 'insured-fix.html'+'?'+order_id;
+            },
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

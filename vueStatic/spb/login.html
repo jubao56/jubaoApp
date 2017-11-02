@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="shortcut icon" type="image/x-icon" href="./img/favicon.ico" media="screen">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta content="telephone=no" name="format-detection">
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="./css/base.css">
+    <link rel="stylesheet" type="text/css" href="./css/login.css">
+    <!-- <script src="//hm.baidu.com/hm.js?8dcdc46116c07356465640ba5ff004fc"></script> -->
+    <script type="text/javascript" src="./js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./js/login/myjquery.js"></script>
+    <script type="text/javascript" src="./js/login/jquery.touchSlider.js"></script>
+    <script type="text/javascript" src="./js/login/common.js"></script>
+    <script src="./js/login/regular_expression.js"></script>
+    <script src="./js/jquery.cookie.js"></script>
+</head>
+<body style="background-color: #fff;">
+	<header class="header">
+        <div class="h_top" style="background-color: white">
+            <a class="go_back" href="javascript:void();" onclick="history.back();" style="color: black">
+                <span>
+                    <img src="./img/back1.png">
+                </span>登录
+            </a>
+        </div>
+    </header>
+    <article class="artic">
+        <div class="main">
+            <div class="reg">
+                <div class="reg_box">
+                    <ul>
+                        <li>
+                            <input id="username" value="" maxlength="30" type="text" placeholder="手机号码/用户名">
+                        </li>
+                        <li style="height:1rem">&nbsp;</li>
+                        <li>
+                            <input id="password" type="password" value="" maxlength="30" placeholder="密码">
+                        </li>
+                    </ul>
+                    <p style="line-height: 40px;">&nbsp;<input type="checkbox" name="rememberMe" id="rememberMe" ><label for="rememberMe">记住密码</label></p>
+                    <div style="height: 1.26rem;">
+                        <span id="span_tip" style="color: red; background: url('./img/L_tips.png') no-repeat left center; padding-left: 1.2rem;display:none ;">&nbsp;</span>
+                    </div>
+                    <input class="dl_but" type="button" id="btn_login" onclick="login()" value="登录">
+                    <input class="zc_but" name="" type="button" style="margin-top: 2rem;" onclick="register()" value="注册">
+                    <p>&nbsp;</p>
+                    <p class="forget"><a href="./modify-pwd.html">忘记密码</a></p>
+
+                    <p class="copyright">©聚保平台</p>
+                </div>
+            </div>
+        </div>
+    </article>
+    <script type="text/javascript">
+        // 读入cookie 
+        $(function readCookie(){ 
+            if (getCookie("rmbUser") == "true") {
+            $("#rememberMe").prop("checked", true); 
+            $("#username").val(getCookie("username"));
+            $("#password").val(getCookie("password"));
+            } 
+        })
+
+        $(function () {
+            $("#username").focus(function () {
+                $("#span_tip").html("").hide();
+            });
+            $("#password").focus(function () {
+                $("#span_tip").html("").hide();
+            });
+            $("#username").blur(function () {
+                if ($.trim($(this).val()) == "") {
+                    $("#span_tip").html("请输入手机号.").show();
+                    return -1;
+                }
+                else if (!reg_name.test($(this).val())) {
+                    $("#span_tip").html("含有非法字符.").show();
+                    return -2;
+                }
+                else {
+                    $("#span_tip").html("").hide();
+                    return 0;
+                }
+            });
+        });
+
+        function login() {
+            $("#btn_login").attr("disabled", true);
+            
+            if (check_username($("#username"), $("#span_tip")) != 0) {
+                $("#btn_login").attr("disabled", false);
+                return;
+            }
+
+            if ($("#password").val() == "") {
+                $("#span_tip").html("请输入密码.").show();
+                $("#btn_login").attr("disabled", false);
+                return;
+            }
+
+            $("#span_tip").html("");
+            var token = "";
+            // var cookie_user = '';
+            // var cookie_password = '';
+
+            // 写入cookie 的函数
+            function saveCookie(){
+                if($("#rememberMe").prop("checked")){
+                    var username = $("#username").val(); 
+                    var password = $("#password").val();
+                    setCookie("rmbUser", "true", { expires: 30*24 }); //存储一个带 30 天期限的cookie
+                    setCookie("username", username, { expires: 30*24 });
+                    setCookie("password", password, { expires: 30*24 });
+                    }else{
+                    setCookie("rmbUser", "false", { expire: -1 });
+                    setCookie("username", "", { expires: -1 });
+                    setCookie("password", "", { expires: -1 });
+                    } 
+               }
+            $.ajax({
+                url: cmnUrl + '/v1/cmn/user/login',
+                type: "POST",
+                data: JSON.stringify({ "mobile": $("#username").val(), "password": $("#password").val() }),
+                success: function (data) {
+                    var err_code = data.err_code;
+                    if(err_code === 0){
+                        token = data.data.access_token;
+                        saveCookie();
+                        setCookie('jubao_user',token,{ expires: 4 }); //设置token的cookie存在时间为120分钟;, domain:'jubao56.com'
+                        location.href = "home.html";
+                    }else if(err_code === 1004 ){
+                        $("#span_tip").html("密码错误，请重试").show();
+                    }else if(err_code === 1010){
+                        $("#span_tip").html("您填写的手机号尚未注册，请先注册后再登录").show();
+                    }
+                    // } else {
+                    //     $("#span_tip").html(result.message).show();
+                    // }
+                },
+                complete: function (x, r) {
+                    $("#btn_login").attr("disabled", false);
+                }
+            });
+        }
+        var reg_name = /^[\u4e00-\u9fa5a-zA-Z0-9]{6,}$/;
+        function check_username(obj, tip) {
+            if ($.trim($(obj).val()) == "") {
+                $(tip).html("请输入用户名.").show();
+                return -1;
+            }
+            else if (!reg_name.test($(obj).val())) {
+                $(tip).html("含有非法字符.").show();
+                return -2;
+            }
+            $(tip).html("").hide();
+            return 0;
+        }
+        function register() {
+            location.href = 'register.html';
+        }
+    </script>
+   <!--  <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "//hm.baidu.com/hm.js?8dcdc46116c07356465640ba5ff004fc";
+          var s = document.getElementsByTagName("script")[0]; 
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script> -->
+
+</body>
+</html>

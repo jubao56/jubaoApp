@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聚保商铺保</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link rel="apple-touch-icon" href="img/spb_01.jpg">
+    <link rel="Shortcut Icon" href="img/spb2.ico" />
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+</head>
+<body style="font-size: 0">
+    <div style="width: 0;height: 0;overflow: hidden;">
+        <img class="spb_img" src="img/spb_01.jpg"/>
+    </div>
+    <div class="header clearfix" style="position: fixed; width: 100%">
+        <p class="top_border"></p>
+        <a class="top_link fl user" href="javascript:;"><img src="img/top_ren.png"></a>
+        <a class="top_link fr" href="tel:4008059680"><img src="img/top_phone.png"></a>
+        <p class="top_logo"><a href="http://www.jubao56.com/m/" style="display:inline-block;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);"><img src="img/logo.png"></a> </p>
+    </div>
+    <img class="spb_img" src="img/spb_01.gif" style="margin-top:0.9rem;"/>
+    <img class="spb_img" src="img/spb_02.jpg"/>
+    <img class="spb_img" src="img/spb_03.jpg"/>
+    <img class="spb_img" src="img/spb_04.jpg"/>
+    <img class="spb_img" src="img/spb_05.jpg"/>
+    <img class="spb_img mb" src="img/spb_06.jpg"/>
+    <div class="weui-flex btn_box01 bot_btn" style="position: inherit;">
+        <div class="weui-flex__item" id="next" style="display: inline-block"><a href="javascript:;" class="weui-btn sp_btn01 w90 weui-btn_plain-default">立即投保</a></div>
+        <div class="weui-flex__item" style="display: inline-block; width: 50%;"><a href="javascript:;" class="weui-btn sp_btn02 w90 weui-btn_plain-default">点击分享</a></div>
+    </div>
+    <div class="weui-mask dn"></div>
+    <div class="spb_share dn"><img src="img/guide1.png"></div>
+</body>
+<script>
+    $(function(){
+        $('.sp_btn02').click(function(){
+            $('.weui-mask,.spb_share').show();
+        });
+        $('.weui-mask,.spb_share').click(function(){
+            $('.weui-mask,.spb_share').hide();
+        });
+        //顶部判断登录
+        $('.user').click(function(){
+           if(!getToken()){
+//               window.location.href = 'login.html'
+               window.location.href = backUrl+'/#/login'
+           }else {
+//               window.location.href = 'home.html'
+//               window.location.href = backUrl+'/#/userBack'
+               window.location.href = userHref
+           }
+        });
+        //立即投保
+        $('.sp_btn01').click(function(){
+            if(!getToken()){
+//                window.location.href = 'login.html'
+                window.location.href = backUrl+'/#/login'
+            }else {
+                window.location.href = 'insured-create.html'
+            }
+        });
+    });
+//    if(!isWWW){
+//        $('#next')[0].style.display = 'block'
+//    }
+</script>
+</html>

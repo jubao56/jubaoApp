@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-上传支付凭证</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/weui.min.js"></script>
+</head>
+<body>
+<div v-cloak class="box">
+    <div class="top_bar">
+        <a class="back fl" href="javascript:window.history.back();"><img src="img/back.png"/> </a>
+        <span class="title">上传支付凭证</span>
+    </div>
+    <div class="for_margin"></div>
+    <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>投保人:</p>
+        </div>
+        <div class="weui-cell__ft tover" style="width: 5.3rem">{{policyholder}}</div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>被保险人:</p>
+        </div>
+        <div class="weui-cell__ft tover" style="width: 5.3rem">{{beneficiary}}</div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">保单寄送地址:</label></div>
+        <div class="weui-cell__ft tover" style="width: 5.3rem">{{deliver_address}}</div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cells__tips" style="color: #ff0000; padding-left:0;">
+            提示：<br/>
+            1. 开户行&nbsp:&nbsp中国工商银行武汉黄浦支行营业部<br/>
+            2. 账&nbsp&nbsp户&nbsp :3202001629200167342<br/>
+            3. 开户名&nbsp:&nbsp中国大地财产保险股份有限公司湖北分公司<br/>
+            4. 中国保监会提示：互联网保险保费必须支付给保险公司！
+        </div>
+    </div>
+    <div class="switch" v-on:click="uploadImg($event)">
+        <div class="weui-cell switch-top">
+            <div class="weui-cell__bd">
+                <p>支付凭证上传</p>
+            </div>
+            <div class="weui-cell__ft"></div>
+        </div>
+        <div class="switch-box">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <div class="weui-uploader pl30">
+                        <div class="weui-uploader__hd">
+                        </div>
+                        <div class="weui-uploader__bd">
+                            <ul class="weui-uploader__files" id="uploaderFiles">
+                            </ul>
+                            <div class="weui-uploader__input-box">
+                                <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-cells__tips" style="color: #ff0000; padding-bottom: 1.2rem;">
+        温馨提示：
+        请上传清晰的支付凭证照片！<br/>
+    </div>
+    <div class=" send_help_btn">
+        <a href="javascript:;" @click="payoffLine" class="weui-btn weui-btn_primary">上传完毕</a>
+    </div>
+    <!--弹框-->
+    <div class="weui-mask dn"></div>
+    <div class="weui-dialog dn" >
+        <div class="weui-dialog__bd" style="padding: 1em 15px">
+            <i style="font-size: 65px;" class="weui-icon-success weui-icon_msg"></i>
+            <p style="font-size: 0.35rem; line-height: 0.6rem">上传成功</p>
+            <!--<p style="font-size: 0.24rem; line-height: 0.4rem;">保险公司将立即审核贵公司的投保资料。</p>
+            <p style="font-size: 0.24rem; line-height: 0.4rem;">保单出具完毕后我们将及时通知您。</p>-->
+            <p style="font-size: 0.24rem; line-height: 0.4rem;">您的支付凭证我们已收悉。保险公司将在1个工作日内对您的支付事宜进行确认，并及时为您出具正式保险单证。请耐心等待。</p>
+        </div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    if(!getToken()){
+//        window.location.href = 'login.html';
+        window.location.href = backUrl+'/#/login';
+    }
+    var token = getToken();
+    var order_id = window.location.href.substring(window.location.href.indexOf("?")+1,window.location.href.length);
+    var vm = new Vue({
+        el:'.box',
+        data:{
+            policyholder:"",
+            beneficiary:"",
+            deliver_address:"",
+        },
+        methods:{
+            getIniInfo:function(){
+                $.ajax({
+                    url: spbUrl + '/v1/spb/order/info',
+                    type:'get',
+                    headers:{'Authorization':'Bearer ' + token},
+                    data:{"id": order_id},
+                    beforeSend: function(data){
+                        if(data.readyState == 0){
+                            weui.loading('loading');
+                        }
+                    },
+                    success:function(data){
+                        vm.policyholder = data.data.policyholder;
+                        vm.beneficiary = data.data.beneficiary;
+                        vm.deliver_address = data.data.deliver_address;
+//                        console.log(data.data.shops)
+                    },
+                    complete: function(data){
+                        if(data.status == 200){
+                            weui.loading('loading').hide();
+                        }
+                    },
+                })
+            },
+            //上传,查看图片
+            uploadImg:function(e){
+                var e = e || window.event;//事件委托
+                var target = e.target || e.srcElement;//兼容chrome,ie
+                var $v = $(target).parents('.weui-cell');
+                var uploadCount = 0;
+                if(target.className == 'weui-uploader__input'){
+                    weui.uploader($v, {
+                        url: fileUrl + '/res/file/upload',
+                        auto: true,
+                        type: 'file',
+                        fileVal: 'fileVal',
+                        compress: {
+                            width: 1600,
+                            height: 1600,
+                            quality: .8
+                        },
+                        onBeforeQueued: function(files,item) {
+                            // `this` 是轮询到的文件, `files` 是所有文件
+                            if(["image/jpg", "image/jpeg", "image/png", "image/gif"].indexOf(this.type) < 0){
+                                weui.alert('请上传图片');
+                                return false; // 阻止文件添加
+                            }
+                            if(this.size > 10 * 1024 * 1024){
+                                weui.alert('请上传不超过10M的图片');
+                                return false;
+                            }
+                            if (files.length > 1 ) { // 防止一下子选择过多文件
+                                weui.alert('一次只能上传1张图片，请重新选择');
+                                return false;
+                            }
+                            if (uploadCount + 1 > 5) {
+                                weui.alert('最多只能上传5张图片');
+                                return false;
+                            }
+                            $('.weui-uploader__files').children().remove();
+                            // return true; // 阻止默认行为，不插入预览图的框架
+                        },
+                        onBeforeSend: function(data, headers){
+                            $.extend(data, { "product_name": "spb" ,"file_name": this.name,"file_type":512});
+                            //$.extend(headers, {'JB-Filename':encodeURI(this.name)}); // 可以扩展此对象来控制上传头部
+
+                        },
+                        onQueued: function(){
+                        },
+                        onSuccess: function(ret){
+                            uploadCount++;
+                            $v.find('.weui-uploader__file').last().attr('picUrl',ret.data);
+                        },
+
+                    });
+                } else if(target.className == 'weui-uploader__file'||target.className == 'weui-uploader__file weui-uploader__file_status'){
+                    var url = target.style.backgroundImage.replace('"','').replace('"','');
+                    url = url.slice(4,url.length-1);
+                    var gallery = weui.gallery(url, {
+                        className: 'file',
+                        onDelete: function(){
+                            weui.confirm(
+                                    '确定删除该图片？',
+                                    function(){
+                                        $(target).remove();
+                                    });
+                            gallery.hide();
+                        }
+                    });
+                }
+            },
+            //确认上传
+            payoffLine:function(){
+                if($('.weui-uploader__files li').length==0){
+                    weui.alert('请上传支付凭证！');
+                    return false;
+                }
+                var file_url = $('.weui-uploader__files').find('li').attr('picUrl');
+                $.ajax({
+                    url: spbUrl + '/v1/spb/order/payoffline',
+                    type:'post',
+                    headers:{'Authorization':'Bearer ' + token},
+                    data:JSON.stringify({
+                        "order_id": Number(order_id),
+                        "file_url":file_url
+                    }),
+                    beforeSend: function(data){
+                        if(data.readyState == 0){
+                            weui.loading('loading');
+                        }
+                    },
+                    success:function(data,status){
+                        if (data.err_code == 0) {
+                            $('.weui-dialog,.weui-mask').show();
+                            $('.weui-dialog__btn_primary').click(function(){
+                                $('.weui-dialog,.weui-mask').hide();
+                                window.location.href="spbordersBack.html";
+                            });
+                        };
+                    },
+                    complete: function(data,status){
+                        if(data.status == 200){
+                            weui.loading('loading').hide();
+                        };
+                    },
+                })
+            }
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

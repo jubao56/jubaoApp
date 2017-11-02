@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聚保商铺保</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/rest.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+<div class="box" v-cloak>
+    <header class="user_header">
+        <div @click="setcomname">
+            <img src="img/head.png"/>
+        </div>
+        <p @click="setcomname">{{name}}</p>
+    </header>
+    <div class="user_nav">
+        <ul class="clearfix">
+            <li>
+                <a href="javascript:;">
+                    <span>0.00</span>
+                    <p>可用余额</p>
+                </a>
+            </li>
+            <li>
+                <a href="uneffectlist.html">
+                    <span>{{spb_un}}</span>
+                    <p style="color: #ff0000;">未完成订单</p>
+                </a>
+            </li>
+            <li>
+                <a href="index.html">
+                    <p style="line-height: 1.2rem">返回首页</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="user_list weui-cells">
+        <div class="switch">
+            <div class="weui-cell switch-top" >
+                <div class="weui-cell__hd">
+                    <img src="img/home_spb.png">
+                </div>
+                <div class="weui-cell__bd">
+                    <p>商铺火灾保</p>
+                </div>
+                <div class="weui-cell__ft"><i class="icon" ></i></div>
+            </div>
+            <div class="switch-box">
+                <ul class="clearfix">
+                    <li>
+                        <a class="red" href="uneffectlist.html">未生效({{spb_un}})</a>
+                    </li>
+                    <li>
+                        <a style="color: #000;" href="effectlist.html">已生效({{spb_ed}})</a>
+                    </li>
+                    <li>
+                        <a class="btn" href="insured-create.html">立即投保</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="weui-cell switch-top" @click="setcomname">
+            <div class="weui-cell__hd">
+                <img src="img/h_icon6.png">
+            </div>
+            <div class="weui-cell__bd">
+                <p>设置公司名称</p>
+            </div>
+            <div class="weui-cell__ft"></div>
+        </div>
+        <div class="weui-cell switch-top" @click="setSpbChannel()">
+            <div class="weui-cell__hd">
+                <img src="img/h_icon6.png">
+            </div>
+            <div class="weui-cell__bd">
+                <p>设置商铺保渠道</p>
+            </div>
+            <div class="weui-cell__ft"></div>
+        </div>
+        <div class="weui-cell switch-top" @click="modify">
+            <div class="weui-cell__hd">
+                <img src="img/sz_icon4.png">
+            </div>
+            <div class="weui-cell__bd">
+                <p>修改登录密码</p>
+            </div>
+            <div class="weui-cell__ft"></div>
+        </div>
+        <!--<div class="weui-cell switch-top" >
+            <div class="weui-cell__hd">
+                <img src="img/h_icon7.png">
+            </div>
+            <div class="weui-cell__bd">
+                <p>投保指南</p>
+            </div>
+            <div class="weui-cell__ft"></div>
+        </div>-->
+        <div class="weui-cell switch-top" >
+            <div class="weui-cell__hd" style="width: 0.5rem">
+            </div>
+            <div class="weui-cell__bd logout">
+                <p>安全退出</p>
+            </div>
+            <div class="weui-cell__ft"></div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    if(!getToken()){
+        window.location.href = 'login.html';
+    }
+    var token = getToken();
+    $(function(){
+        $('.switch-top').click(function(){
+           $(this).siblings('.switch-box').slideToggle();
+        });
+        $('.logout').click(function(){
+            removeToken()
+            window.location.href="index.html"
+        });
+    });
+    var vm = new Vue({
+        el:'.box',
+        data:{
+            company_id:0,
+            name:"",
+            spb_un:0,
+            spb_ed:0,
+        },
+        methods:{
+            getIniInfo:function(){
+                $.ajax({
+                    url:cmnUrl+ '/v1/cmn/user/info',
+                    type:'get',
+                    headers:{'Authorization':'Bearer ' + token},
+                    success:function(data){
+                        console.log(data);
+                        if(data.data.company_id){
+                            vm.company_id = data.data.company_id;
+                            $.ajax({
+                                url:cmnUrl+"/v1/cmn/company/info",
+                                type:"get",
+                                headers:{'Authorization':'Bearer ' + token},
+                                data:{"id":vm.company_id},
+                                success:function(data){
+                                    if(data.data.name){
+                                        vm.name=data.data.name;
+                                        $.ajax({
+                                            url:spbUrl+"/v1/spb/order/list",
+                                            headers: {'Authorization':'Bearer ' + token},
+                                            type:'get',
+                                            data:{"rows":128},
+                                            //data:JSON.stringify({'policyholder':encodeURI(encodeURI(vm.name))}),
+                                            success:function(data){
+                                                console.log(data)
+                                                for(var i=0;i<data.rows.length;i++){
+                                                    if(data.rows[i].status<256 && data.rows[i].status != 16){
+                                                        vm.spb_un++;
+                                                    }
+                                                    if(data.rows[i].status == 256) {
+                                                        vm.spb_ed++;
+                                                    }
+                                                };
+                                            }
+                                        });
+                                    }
+
+                                },
+                            });
+
+                        }else{
+                            vm.name = '请设置公司名称'
+                        }
+
+                    }
+                });
+            },
+            setcomname:function(){
+                window.location.href = "setcompanyname.html"
+            },
+            setSpbChannel:function(){
+                window.location.href = "setSpbChannel.html"
+            },
+            modify:function(){
+                window.location.href = "modify-pwd.html"
+
+            },
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

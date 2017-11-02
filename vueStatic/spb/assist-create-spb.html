@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-请求协同</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/weui.min.js"></script>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+    <div class="box" id="box" v-cloak>
+        <div class="top_bar">
+            <a class="back fl" @click="back" href="javascript:;" ><img src="img/back.png"/> </a>
+            <span class="title">填写协同信息</span>
+        </div>
+        <div class="weui-cell" style="margin-top: 1.2rem;">
+            <div class="weui-cell__bd">
+                <p>被保险人:</p>
+            </div>
+            <div class="weui-cell__ft tover" style="width: 5rem">{{insedPerson}}</div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd">
+                <p>档口地址:</p>
+            </div>
+            <div class="weui-cell__ft tover" style="width: 5rem">{{comAddress}}</div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">协助人电话:</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" v-model="helpPhone" value="{{helpPhone}}" placeholder="请填写协助人电话">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__bd">
+                <p>需要的照片:</p>
+            </div>
+        </div>
+        <div class="weui-cells_checkbox">
+            <label class="weui-cell weui-check__label">
+                <div class="weui-cell__hd">
+                    <input type="checkbox" class="weui-check" name="checkbox1" value="商铺档口正面照(至少一张);front_image_urls-32" v-model="helpPic">
+                    <i class="weui-icon-checked"></i>
+                </div>
+                <div class="weui-cell__bd">
+                    <p>商铺档口正面照(至少一张)</p>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label">
+                <div class="weui-cell__hd">
+                    <input type="checkbox" name="checkbox1" value="商铺档口内部照(至少三张);inside_image_urls-64" v-model="helpPic" class="weui-check">
+                    <i class="weui-icon-checked"></i>
+                </div>
+                <div class="weui-cell__bd">
+                    <p>商铺档口内部照(至少三张)</p>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label">
+                <div class="weui-cell__hd">
+                    <input type="checkbox" name="checkbox1" value="消防设施照(至少两张);fire_device_image_urls-128" v-model="helpPic" class="weui-check">
+                    <i class="weui-icon-checked"></i>
+                </div>
+                <div class="weui-cell__bd">
+                    <p>消防设施照(至少两张)</p>
+                </div>
+            </label>
+        </div>
+        <div class=" send_help_btn">
+            <a href="javascript:;" class="weui-btn weui-btn_primary" @click="postInfo">邀请协同</a>
+        </div>
+    </div>
+</body>
+<script>
+    if(!getToken()){
+//        window.location.href = 'login.html';
+        window.location.href = backUrl+'/#/login';
+    }
+    var reg_phone = /^(0|86|17951)?(13[0-9]|15[012356789]|17[0-9]|18[0-9]|14[57])[0-9]{8}$/;
+    var token = getToken();
+    var info = (window.location.href.substring(window.location.href.indexOf("&")+1,window.location.href.length)).split('&');
+    var order_id = window.location.href.substring(window.location.href.indexOf("?")+1,window.location.href.indexOf("&"));
+
+    var vm = new Vue({
+        el:'#box',
+        data:{
+            insedPerson:'',
+            comAddress:'',
+            helpPhone:'',
+            helpPic:[],
+        },
+        methods:{
+            //初始化信息
+            getIniInfo:function(){
+                vm.insedPerson = decodeURI(info[0]);
+                vm.comAddress = decodeURI(info[1]);
+            },
+            //提交信息验证
+            postInfo:function(){
+                var title = "";
+                var urls = "";
+                for(var i=0;i<vm.helpPic.length;i++){
+                    title += vm.helpPic[i].substring(0,vm.helpPic[i].indexOf(';'))+',';
+                    urls += vm.helpPic[i].substring(vm.helpPic[i].indexOf(';')+1,vm.helpPic[i].length)+',';
+                }
+                title = title.substring(0,title.length-1);
+                urls = urls.substring(0,urls.length-1);
+                if(vm.helpPhone.length==0){
+                    weui.alert('请输入协助人电话！');
+                }else if(!reg_phone.test(vm.helpPhone)){
+                    weui.alert('请输入正确协助人电话！');
+                }else if(vm.helpPic.length==0){
+                    weui.alert('请至少选择一项需要的照片！');
+                }else {
+                    $.ajax({
+                        url: cmnUrl + '/v1/cmn/assist/invite',
+                        type:'post',
+                        headers:{'Authorization':'Bearer ' + token},
+                        data:JSON.stringify({
+                            "entity":"spb_shop",
+                            "entity_id":Number(info[3]),
+                            "description":title,
+                            "fields":urls,
+                            "content":"被保险人:"+vm.insedPerson+';'+'档口地址:'+vm.comAddress,
+                            "operator":info[2],
+                            "invitee":vm.helpPhone}),
+                        beforeSend: function(data){
+                            if(data.readyState == 0){
+                                weui.loading('loading');
+                            }
+                        },
+                        success: function(data){
+                            //console.log("被保险人:"+vm.insedPerson+';'+'档口地址:'+vm.comAddress)
+                        },
+                        complete: function(data){
+                            if(data.status == 200){
+                                weui.loading('loading').hide();
+                            }
+                            weui.alert('协助信息已发送！请确认协助成功后再点击我的保单进行下一步操作，以免覆盖协助上传的照片！',function(){
+//                                window.location.href="insured-fix.html"+'?'+ order_id;
+//                                window.location.href = backUrl + '#/userBack'
+                                window.location.href = userHref
+                            });
+                        },
+                    })
+                }
+            },
+            //返回
+            back:function(){
+                  window.location.href = 'insured-fix.html'+'?'+order_id;
+            },
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

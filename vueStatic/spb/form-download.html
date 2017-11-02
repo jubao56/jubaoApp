@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-投保单下载</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var windowWidth = html.clientWidth;
+            html.style.fontSize = windowWidth / 7.5 + 'px';
+        })();
+    </script>
+    <link href="css/shops.css" rel="stylesheet" type="text/css">
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/weui.min.js"></script>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+    <style>
+        body {
+            padding-bottom: 1.5rem;
+        }
+        .weui-cell:before {
+            left:25px;
+        }
+        .weui-no-before:before {
+            border:none;
+        }
+        .layout-a a {
+            margin-right: 0.01rem;
+        }
+        .margin-span01 {
+            margin-left: 0.2rem;
+        }
+        .margin-span02 {
+            padding-left: 0.5rem;
+            text-align: justify;
+            line-height: 0.44rem;
+        }
+        .attention-span {
+            position: absolute;
+            line-height: 0.43rem;
+        }
+
+        .style-border {
+            border-top: 1px solid #d9d9d9;
+            transform-origin: 0 0;
+            transform: scaleY(.5);
+        }
+        .style-border-last {
+            border: 0.01rem solid #d9d9d9;
+            margin-left: 25px;
+            transform-origin: 0 0;
+            transform: scaleY(.5);
+        }
+        .download_header {margin-top: 0.15rem;}
+        #copyPdfUrl{
+
+        }
+    </style>
+</head>
+<body>
+<div id="info_fill" v-cloak>
+    <div class="top_bar">
+        <a class="back fl" href="javascript:;" onclick="window.history.back();"><img src="img/back.png"/> </a>
+        <span class="title">投保单下载</span>
+    </div>
+    <div class="for_margin"></div>
+    <div class="switch">
+        <div style="background-color: #ebebeb; padding-top: 0.1rem; padding-bottom: 0.1rem; margin-bottom: 0.2rem;">
+          <div class="weui-cells__title " >根据您填写的投保信息，我们已为您生成专属投保单，有以下三种方式可获得投保单：</div>
+        </div>
+        <div class="weui-cells__title download_header">1.将投保单发送至您的邮箱</div>
+        <div class="weui-cell weui-no-before">
+            <input v-model="email" value="{{email}}" class="weui-input" type="text" placeholder="请输入邮箱地址">
+        </div>
+        <div class="weui-cell layout-a">
+            <a href="javascript:;" v-on:click="sendEmail" class="weui-btn down_btn weui-btn_mini weui-btn_primary ">发送邮件</a>
+        </div>
+        <div class="style-border"></div>
+        <div class="weui-cells__title download_header">2.直接下载到手机(<span style="color:red;">PDF格式</span>)</div>
+        <div class="weui-cell layout-a weui-no-before">
+            <a v-bind:href="pdfurl" class="weui-btn down_btn weui-btn_mini weui-btn_primary ">下载到手机</a>
+        </div>
+        <div class="style-border"></div>
+        <div class="weui-cells__title download_header">3.投保单下载链接地址，您可以复制通过微信或<span class="margin-span01">QQ等工具发送到电脑端下载并打印。</span></div>
+        <div class="weui-cell weui-no-before weui-after">
+            <input class="weui-input" type="text" v-bind:value="pdfurl" id="copyPdfUrl">
+        </div>
+        <div class="style-border-last"></div>
+    </div>
+    <div class="weui-cells__tips" style="color: #6e6e6e;font-size: 0.2rem;"><span class="attention-span">注：</span><p class="margin-span02"> 投保单是重要的保险资料，请务必认真阅读，充分了解您的保险权利与义务。如上述三种方式都无法获得投保单，请联系聚保服务热线：4008059680。</p></div>
+    <div class=" send_help_btn">
+        <a href="javascript:;" v-on:click="downloadForm" class="weui-btn weui-btn_primary">上传盖章后的投保单</a>
+    </div>
+    <!--弹框-->
+    <div class="weui-mask dn"></div>
+    <div class="weui-dialog dn" >
+        <div class="weui-dialog__bd" style="padding: 1em 15px">
+            <i style="font-size: 65px;" class="weui-icon-success weui-icon_msg"></i>
+            <p style="font-size: 0.35rem; line-height: 0.6rem">邮件发送成功</p>
+            <p style="font-size: 0.24rem; line-height: 0.4rem;">请登录邮箱下载您的专属投保单。</p>
+            <p style="font-size: 0.24rem; line-height: 0.4rem;">然后将加盖公章后的投保单拍照照片上传。</p>
+        </div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    if(!getToken()){
+//        window.location.href = 'login.html';
+        window.location.href = backUrl+'/#/login';
+    }
+    var order_id = window.location.href.substring(window.location.href.indexOf("?")+1,window.location.href.length);
+    var token = getToken();
+    //console.log("token:"+token);
+    //console.log("order_id:"+order_id);
+    var vm = new Vue({
+        el: '#info_fill',
+        data: {
+            pdfurl:"",
+            email:"",
+        },
+        methods: {
+            //初始化加载
+            getIniInfo:function(){
+                $.ajax({
+                    url: spbUrl + '/v1/spb/order/createform',
+                    type: 'get',
+                    headers: {'Authorization':'Bearer ' + token},
+                    data:{"order_id": Number(order_id)},
+                    success: function(data) {
+                        if (data.err_code == 0) {
+                            vm.pdfurl = spbUrl + data.form_url;
+                        }
+                    }
+                })
+            },
+            sendEmail:function () {
+                //console.log("email:"+this.email);
+                if(!this.email){
+                    weui.alert('请输入邮箱地址！')
+                    return
+                }
+                $.ajax({
+                    url: cmnUrl + '/v1/cmn/email/send',
+                    type:'post',
+                    headers:{'Authorization':'Bearer ' + token},
+                    data:JSON.stringify({
+                        "receiver": this.email,
+                        "subject":"聚保物流保险服务平台商铺档口火灾保专属投保单",
+                        "content": "投保单是重要的保险资料，请务必认真阅读，充分了解您的保险权利与义务。然后将您的商铺档口火灾保专属投保单下载并打印，加盖公司公章，将盖章后的投保单拍照照片上传到您的商铺保档口火灾保订单，链接：http://www.jubao56.com/m",
+                        "attachment": "/static/商铺档口火灾保-投保单.pdf"
+                    }),
+                    beforeSend: function(data){
+                        if(data.readyState == 0){
+                            weui.loading('loading');
+                        }
+                    },
+                    success:function(data){
+                        if (data.err_code == 0) {
+                            $('.weui-dialog,.weui-mask').show();
+                            $('.weui-dialog__btn_primary').click(function(){
+                                $('.weui-dialog,.weui-mask').hide();
+                            });
+                        }
+                    },
+                    complete: function(data){
+                        if(data.status == 200){
+                            weui.loading('loading').hide();
+                        }
+                    },
+                })
+            },
+            downloadForm:function(){
+                //console.log("uploadform");
+                window.location.href = 'uploadform.html?'+ order_id;
+            }
+        }
+    });
+    vm.getIniInfo();
+</script>
+</html>

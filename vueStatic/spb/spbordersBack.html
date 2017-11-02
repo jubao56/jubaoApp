@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商铺保-未生效保单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="css/base.css" rel="stylesheet" type="text/css">
+    <link href="css/common.css" rel="stylesheet" type="text/css"/>
+    <link href="css/weui.min.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/weui.js"></script>
+    <style>
+        .header .h_top {line-height: 7vh;color: #fff;font-size: 1.2rem;background: #0FACF7;}
+        .unpaid,.paid {width:50%;float:left;text-align:center;height: 3rem;line-height:3rem;font-size:1.3rem;}
+        .tab-on { color: #0FACF7;padding: 7px 20px;border-bottom: 2px solid #0facf7; }
+        .main .tab { background: #fff; margin-bottom: 5px; }
+        .bao_list>div { background: #fff;}
+        .bao_list .switch .switch-top{ background: #f5f5f5}
+        .bao_list .cell { padding: 10px 15px 10px 25px; display: flex; align-items: center;}
+        .bao_list .cell-l{ width: 25%;}
+        .bao_list .cell-r{ color: #999;}
+        .link_btn,.de_order{display: inline-block;  text-align: center;  color: #fff;  padding:2px 5px;  background: linear-gradient(#2073e8,#5297fe);  border-radius: 5px;}
+        .look_more{background: transparent;}
+        .cell-r { flex: 1; }
+        .cell-u {margin-right: 8px}
+    </style>
+</head>
+<body>
+<div class="spborders">
+    <header class="header">
+        <div class="h_top" style="text-align:center;">
+            <a class="go_back" :href="userHref"><span><img style="float:left;" src="./img/back.png"></span></a>我的保单
+        </div>
+    </header>
+    <article class="artic">
+        <div class="main">
+            <div class="tab clearfix">
+                <div class="unpaid" @click="toggle('unpaid')"><span :class="{'tab-on': orderStatus == 'unpaid'}">未生效保单</span></div>
+                <div class="paid" @click="toggle('paid')"><span :class="{'tab-on': orderStatus == 'paid'}">已生效保单</span></div>
+            </div>
+            <div class="unpaidList" v-show="orderStatus == 'unpaid'">
+                <div class="bao_list" style="padding-top: 0.125rem;">
+                    <div v-for="(order,index) in unpaidOrders">
+                        <div class="switch classShow" >
+                            <div class="cell switch-top" @click="hide_detail(order)">
+                                <div class="cell-u">
+                                    <p>保单 <span v-html="index + 1"></span></p>
+                                </div>
+                                <div class="cell-r"><b v-html="order.updated_at.replace('T','&nbsp&nbsp').replace('+08:00','')"></b>
+                                    <a class="link_btn" href="javascript:;" v-on:click.stop="to_detail(index)">查看详情</a>
+                                    <a class="link_btn" href="javascript:;" @click.stop="delOrder(index)">取消</a></div>
+                            </div>
+                            <div class="switch-box dn" v-show="order.isShow">
+                                <div class="cell">
+                                    <div class="cell-l">
+                                        <p>被保险人:</p>
+                                    </div>
+                                    <div class="cell-r" v-html="order.beneficiary"></div>
+                                </div>
+                                <div class="cell">
+                                    <div class="cell-l">
+                                        <p>寄送地址：</p>
+                                    </div>
+                                    <div class="cell-r">
+                                        <p v-html="order.province+order.city+order.district+order.deliver_address"></p>
+                                    </div>
+                                </div>
+                                <div class="cell">
+                                    <div class="cell-l">
+                                        <p>保单状态：</p>
+                                    </div>
+                                    <div class="cell-r" v-html="order.status_text"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="look_more">
+                    <a class="more">无更多数据</a>
+                </div>
+            </div>
+            <div class="paidList" v-show="orderStatus == 'paid'">
+                <div class="bao_list" style="padding-top: 0.125rem;">
+                    <div v-for="(order,index) in paidOrders">
+                        <div class="switch classShow" >
+                            <div class="cell switch-top" @click="hide_detail(order)">
+                                <div class="cell-l">
+                                    <p>保单<span v-html="index + 1"></span></p>
+                                </div>
+                                <div class="cell-r"><b style="margin-right: 5px" v-html="order.updated_at.replace('T','&nbsp&nbsp&nbsp').replace('+08:00','')"></b><a class="link_btn" href="javascript:;" v-on:click.stop="to_detail(index)">查看详情</a> </div>
+                            </div>
+                            <div class="switch-box dn" v-show="order.isShow">
+                                <div class="cell">
+                                    <div class="cell-l">
+                                        <p>被保险人:</p>
+                                    </div>
+                                    <div class="cell-r" v-html="order.beneficiary"></div>
+                                </div>
+                                <div class="cell">
+                                    <div class="cell-l">
+                                        <p>寄送地址：</p>
+                                    </div>
+                                    <div class="cell-r">
+                                        <p v-html="order.province+order.city+order.district+ order.deliver_address"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="look_more">
+                    <a class="more">无更多数据</a>
+                </div>
+            </div>
+        </div>
+    </article>
+</div>
+</body>
+<script>
+    var token = getToken();
+    var vm = new Vue({
+        el: '.spborders',
+        data:function(){
+            return {
+                orderStatus: 'unpaid',
+                unpaidOrders: [], //总的未支付订单，用于累计储存每次加载的数据
+                unpaidLoadOrders: [], //每次数据请求返回的未支付数据
+                unpaidTotal: 0, //未支付保单的条数
+                unpaidPage: 1, // 未支付保单的页码
+                paidOrders: [], //总的已完成订单，用于累计储存每次加载的数据
+                paidLoadOrders: [], //每次数据请求返回的已完成数据
+                paidTotal: 0, //已完成保单的条数
+                paidPage: 1, // 已完成保单的页码
+                hideIndex: '',
+                backUrl:backUrl,
+                userHref:userHref,
+                disable:false
+            }
+        },
+        methods: {
+            // 获取未支付保单数据
+            getData: function(){
+                $.ajax({
+                    url: spbUrl + '/v1/spb/order/list',
+                    type: 'get',
+                    headers: {'Authorization':'Bearer ' + token},
+//                    data:{"rows":10,"page":this.unpaidPage},
+                    success: function(data){
+                        //console.log(data.rows);
+                        for (var i = 0; i < data.rows.length; i++) {
+                            if(data.rows[i].status < 256 && data.rows[i].status != 16 ){   //未生效保单
+                                //console.log(data.rows[i].beneficiary);
+                                var unpaidOrders = {};
+                                unpaidOrders.id = data.rows[i].id;
+                                unpaidOrders.beneficiary = data.rows[i].beneficiary;
+                                unpaidOrders.deliver_address = data.rows[i].deliver_address;
+                                unpaidOrders.status = data.rows[i].status;
+                                unpaidOrders.updated_at = data.rows[i].updated_at;
+                                unpaidOrders.province = data.rows[i].province;
+                                unpaidOrders.city = data.rows[i].city;
+                                unpaidOrders.district = data.rows[i].district;
+                                unpaidOrders.isShow = true;
+                                if(unpaidOrders.status == 1) {
+                                    unpaidOrders.status_text = '待上传资料';
+                                } else if(unpaidOrders.status == 2) {
+                                    unpaidOrders.status_text = '请上传投保单';
+                                } else if(unpaidOrders.status == 4) {
+                                    unpaidOrders.status_text = '待审核';
+                                } else if(unpaidOrders.status == 8) {
+                                    unpaidOrders.status_text = '待支付';
+                                } else if(unpaidOrders.status == 32) {
+                                    unpaidOrders.status_text = '已上传支付凭证，待审核';
+                                } else if(unpaidOrders.status == 64) {
+                                    unpaidOrders.status_text = '支付凭证审核失败';
+                                } else if(unpaidOrders.status == 128) {
+                                    unpaidOrders.status_text = '已确认支付，待出单';
+                                }
+                                vm.unpaidOrders.push(unpaidOrders);
+                            }else if (data.rows[i].status == 256) {
+                                var paidOrders = {};
+                                paidOrders.id = data.rows[i].id;
+                                paidOrders.beneficiary = data.rows[i].beneficiary;
+                                paidOrders.deliver_address = data.rows[i].deliver_address;
+                                paidOrders.status = data.rows[i].status;
+                                paidOrders.updated_at = data.rows[i].updated_at;
+                                paidOrders.province = data.rows[i].province;
+                                paidOrders.city = data.rows[i].city;
+                                paidOrders.district = data.rows[i].district;
+                                paidOrders.isShow = true;
+                                vm.paidOrders.push(paidOrders);
+                            }
+                        }
+                        //console.log(JSON.stringify(vm.wsxOrder));
+                    }
+                })
+            },
+            toggle: function(type){
+                this.orderStatus = type;
+                this.hideIndex = ''
+            },
+            to_detail: function (index) {
+                if(this.orderStatus == 'unpaid'){
+                    window.location.href = "uneffectivedetail.html?"+this.unpaidOrders[index].id;
+                }else{
+                    window.location.href = "effectivedetail.html?"+this.paidOrders[index].id;
+                }
+            },
+            hide_detail: function (order) {
+                order.isShow = !order.isShow
+            },
+            delOrder: function(index){
+                if(this.disable){
+                    weui.alert('<p style="word-break: normal">非常抱歉，您的账户暂时无法投保“商铺保”，建议您选择其他险种，详询聚保服务热线：40080-59680。</p>', {title: '尊敬的会员'});
+                    return
+                }
+                var id = vm.unpaidOrders[index].id;
+                weui.confirm('是否确定取消订单！',function () {
+                    $.ajax({
+                        url: spbUrl + '/v1/spb/order/delete',
+                        type: 'POST',
+                        data:JSON.stringify({"id": id*1}),
+                        headers: {'Authorization':'Bearer ' + token},
+                        success: function(res){
+                            console.log(res)
+                            if(res.err_code == 0){
+                                weui.toast('删除成功', {
+                                    duration: 3000,
+                                    className: 'custom-classname',
+                                    callback: function(){
+                                        vm.unpaidOrders.splice(index,1);
+                                    }
+                                });
+                            }
+                        }
+                    })
+                });
+            },
+            checkDisable: function () { //判断账号是否被禁用
+                var _this = this;
+                $.ajax({
+                    url: spbUrl + '/v1/spb/user/info',
+                    type: 'get',
+                    headers: {'Authorization': 'Bearer ' + token},
+                    success: function (data) {
+                        if(data.err_code == 0){
+                            if(data.data.disabled){
+                                _this.disable = true;
+                            }
+                        }
+                    }
+                })
+            }
+        },
+        created: function(){
+            var location = window.location.href;
+            var beforeStr = location.substring(location.indexOf("?")+1);
+            if(beforeStr.indexOf("?")!=-1){
+                beforeStr=beforeStr.substring(beforeStr.indexOf("?")+1)
+            }
+
+            var locMsgArr =beforeStr.split("&");
+            var orderStatus = locMsgArr[0].split("=")[1];
+            if(orderStatus){
+                this.orderStatus = orderStatus;
+            }
+            if(token){
+                this.getData();
+                this.checkDisable();
+            }else {
+                window.location.href=backUrl+'#/login'
+            }
+        }
+    });
+</script>
+</html>
