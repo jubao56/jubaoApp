@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" media="screen">
+    <title>聚保物流保险服务平台</title>
+    <meta name="keywords" content="聚保,物流保险,聚保物流,聚保物流保险,货运保险,员工保险,普货保">
+    <meta name="description" content="聚保让您投保不上当,理赔有人帮！让物流人买到放心的保险，让物流平台放心卖保险！提供货运保险,员工保险,普货保,零担保，城配保等众多物流保险服务！">
+    <link rel="stylesheet" type="text/css" href="resource/common.css">
+    <link rel="stylesheet" type="text/css" href="resource/paySuccess.css">
+    <link rel="stylesheet" type="text/css" href="resource/base.css">
+</head>
+<body>
+<div class="wrapper" id="vue">
+    <div class="fullbg" v-show="bgFlag">
+        <div class="loadEffect">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="paySuccess">
+        <header class="header">
+            <div class="h_top" style="background-color: white">
+                <a class="go_back" href="javascript:void(0);" @click="goBack" style="color: black">
+                <span>
+                    <img src="resource/back1.png">
+                </span>保单详情
+                </a>
+                <a href="javascript:void (0)" class="finish" @click="finish">完成</a>
+            </div>
+        </header>
+
+
+        <article class="artic">
+            <div class="main" style="background-color:white;">
+                <div class="bd_title" style="width:95%;margin-left:1rem;vertical-align:middle;">
+                    <div style="height:12rem;position:relative">
+
+                        <div style="width:100%;">
+                            <p>　　您投保已完成，如投保成功确认单未显示运单号，可能是您上传的是照片或者电子文档格式不兼容。不影响保单效力。</p>
+                            <p>　　上传正确格式的电子表格可以在投保成功确认单上显示运单号，分享给您的客户。让您的客户知道您已为货物投保，让您的客户更放心。</p>
+                        </div>
+
+                        <div class="CDshare fr">
+                            <span style="float:left;margin-top:6px;">分享确认单</span>
+                            <div class="bdsharebuttonbox" style="display: inline;float:right;margin-left:6px;" data-tag="share_0">
+                                <a href="javascript:void(0)" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+                                <a href="javascript:void(0)" class="bds_qzone " data-cmd="qzone" title="分享到QQ空间"></a>
+                                <a href="javascript:void(0)" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+                                <a href="javascript:void(0)" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="baodan" style="border:0.1rem solid black;">
+                        <a href="javascript:void(0)" id="listImgBox">
+
+                        </a>
+                        <br>
+                        <a class="baodan-btn" :href="baodanBtn" v-show="status==1 && !bgFlag">
+                            查看电子保单
+                        </a>
+                    </div>
+                    <div style="clear:both"></div>
+                    <br/><br/>
+                    <div v-show="linkFlag">
+                        <h3>装车清单：</h3>
+                        <span>若遇险情，以您上传的装车清单附件作为赔偿依据。</span>
+                        <br>
+                        <div style="float:left;width:100%;margin-bottom: 20px;margin-top: 15px;">
+                            <ul id="filelist" style="float:left;width:100%;">
+                                <li style="float:left;width:100%;height:30px;"  v-for="(val,idx) in linkLists">
+                                    <a>{{val.name}}</a>&nbsp;&nbsp;&nbsp;
+                                    <a :href="val.file_url" target="_blank">下载</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                </li>
+                            </ul>
+                        </div>
+                        <br/><br/>
+                    </div>
+
+                    <div style="font-weight:bold;font-size:14px">
+                        运单详情：（可以单独分享每单承保信息给客户哦）
+                    </div>
+                    <table style="border: 1px solid #eaeaea;border-collapse:collapse;width:100%;padding-left:90px">
+                        <thead>
+                        <tr style="height:50px;">
+                            <th style="border-right:1px solid #eaeaea;width:13%;background-color:#bfe2fc">运单号</th>
+                            <th style="border-right:1px solid #eaeaea;width:16%;background-color:#bfe2fc">目的地</th>
+                            <th style="border-right:1px solid #eaeaea;width:19%;background-color:#bfe2fc">货物种类</th>
+                            <th style="border-right:1px solid #eaeaea;width:12%;background-color:#bfe2fc">数量</th>
+                            <th style="width:40%;background-color:#bfe2fc">分享运单</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr style="height:48px;border: 1px solid #eaeaea;text-align:center" v-for="(val,idx) in orderLists">
+                            <td style="border-right:1px solid #eaeaea; ">{{val.track_no}}</td>
+
+                            <td style="border-right:1px solid #eaeaea; ">{{val.destination}}</td>
+                            <td style="border-right:1px solid #eaeaea; ">{{val.name}}</td>
+                            <td style="border-right:1px solid #eaeaea; ">{{val.quantity/100 | number(2)}}</td>
+
+                            <td>
+                                <div class="CDshare">
+                                    <div class="share" id="changeBaiduStyle">
+                                        <div class="bdsharebuttonbox" style="display: flex;float:right;margin-left:6px;" :data-tag="'share_'+(idx+1)">
+                                            <a href="javascript:void(0)" class="bds_weixin" data-cmd="weixin" title="分享到微信" ></a>
+                                            <a href="javascript:void(0)" class="bds_qzone " data-cmd="qzone" title="分享到QQ空间"></a>
+                                            <a href="javascript:void(0)" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+                                            <a href="javascript:void(0)" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </article>
+        <!--<div class="limitBg" v-show="bgFlag">-->
+
+        <!--</div>-->
+
+    </div>
+</div>
+</body>
+<script src="resource/jquery-1.9.1.min.js"></script>
+<script src="resource/common.js"></script>
+<script src="resource/vue.min.js"></script>
+<!--<script src="resource/baiduShare.js"></script>-->
+<script>
+    var vm = new Vue({
+        el:"#vue",
+        data:function(){
+            return {
+                //======状态信息======
+                status:"",
+                listId:"",
+                urlDirection:"",
+                userHeader:{},
+                linkFlag:false,//控制订单列表是否显示
+                bgFlag:true, //灰色遮罩
+                //
+                orderImg:"",
+                orderLists:[],
+                linkLists:[],
+                policyholder:"",    //被保险人
+                baodanBtn:''   //保单按钮地址
+            }
+        },
+        created:function(){
+            this.bgFlag=true;//============暂时关掉背景遮罩
+
+            var mes = this.getParamName('status').split('_');
+            this.status= mes[0];
+            this.listId = mes[1];
+            this.getBaodan();
+
+            this.getImg();
+            this.getMsg();
+        },
+        methods:{
+            getParamName:function(name) {
+                var url = location.search; //获取url中"?"符后的字串
+                var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1);
+                    strs = str.split("&");
+                    for(var i = 0; i < strs.length; i ++) {
+                        theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                    }
+                }
+                return theRequest[name]
+            },
+//            getParamName(attr) {
+//                var match = new RegExp('[?&]'+attr+'=([^&]*)') //分组运算符是为了把结果存到exec函数返回的结果里
+//                    .exec(window.location.search);
+//                return match && decodeURIComponent(match[1].replace(/\+/g, ' ')) // url中+号表示空格,要替换掉
+//            },
+            finish:function(){
+                if(window.location.href.indexOf("www")!=-1){
+                    window.location.href="http://www.jubao56.com/m/#/"
+                }else{
+                    window.location.href="http://test.jubao56.com/m/#/home"
+                }
+            },
+            goBack:function(){
+                window.history.go(-1);
+            },
+            baiduShare:function(){
+//                var beforeUrl = window.location.href.substring(0,window.location.href.indexOf("#")-1);
+                var beforeUrl=window.location.origin+'/m';
+//                console.log(beforeUrl+"/vueStatic/baiduShare.html?order_id="+this.listId+"&order_type=zcb")
+                var shareList = [] ;
+                var shareList0=[{
+                    "tag":"share_0",
+                    "bdUrl":beforeUrl+"/vueStatic/baiduShare.html?order_id="+this.listId+"&order_type=zcb"
+                }];
+                for(var i=0;i<this.orderLists.length;i++){
+//                    console.log(this.orderLists[i].track_no,1111)
+                    var tempObj = {
+                        "tag":"share_"+(i+1),
+                        "bdUrl":beforeUrl+"/vueStatic/baiduShare.html?order_id="+this.listId+"&track_no="+this.orderLists[i].track_no+"&order_type=zcb"
+                    };
+                    shareList.push(tempObj)
+                }
+//                var finalShare = shareList.concat(shareList0);
+                var finalShare = shareList0.concat(shareList);
+                console.log(finalShare)
+                window._bd_share_config = {
+                    "common": {
+                        "bdText": "聚保整车保保单!我们将用心为您负责!",
+                        "bdMini": "2",
+                        "bdMiniList": false,
+                        "bdPic": "http://www.jubao56.com/upload_admin/2016-07-05%2010:08:50-banner4_m.jpg",
+                        "bdStyle": "0",
+                        "bdSize": "24"
+                    }, "share" : finalShare
+                };
+              //百度分享代码动态引入
+              with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+            },
+            //获取运单图片
+            getImg:function() {
+                //===========获取运单图片信息===========
+                zcbOrderConfirmation({
+                    order_id: this.listId*1
+                },function(res){
+                    vm.orderImg= zcbUrl+"/v1/zcb/order/confirmation?order_id="+ vm.listId*1;
+                    var box = document.querySelector("#listImgBox");
+                    var img = document.createElement("img");
+                    img.style.width="90%";
+                    box.appendChild(img);
+                    img.src=vm.orderImg;
+                    img.onload= function(){
+                        vm.bgFlag=false;
+                    };
+                })
+            },
+            //获取运单信息
+            getMsg:function() {
+                    //===========根据订单ID获取订单信息===========
+                    var typeAjax = ''
+                    if(this.status==0){//试用
+                        typeAjax = zcbOrderTryInfo;
+                    }else if(this.status==1){//正式
+                        typeAjax = zcbOrderInfo;
+                    }
+                    typeAjax(this.listId*1,function(resp){
+                        console.log(resp,"resp");
+                        var res = JSON.parse(resp);
+                        var tempMsg = res.data;
+                        vm.policyholder = tempMsg.policyholder;
+                        var orderLists = [];
+                        var linkLists=[];
+                        for(var i=0;i<tempMsg.cargos.length;i++){
+                            if(!tempMsg.cargos[i].file_url){ //fileUrl为空则为物流订单，不为空则为文件链接
+                                orderLists.push(tempMsg.cargos[i])
+                            }else{
+                                linkLists.push(tempMsg.cargos[i])
+                            }
+                        }
+                        vm.orderLists=orderLists;
+                        vm.linkLists=linkLists;
+                        if(linkLists[0]){
+                            vm.linkFlag=true;
+                        }
+                        vm.$nextTick(function () {
+                          vm.baiduShare();
+                        })
+                    },function (err) {
+                        vm.baiduShare();
+                    })
+            },
+            //获取电子保单
+            getBaodan:function(){
+                zcbOrderPolicy(this.listId,function(res){
+                    vm.baodanBtn = zcbUrl+'/v1/zcb/order/policy'+'?order_id='+vm.listId
+                })
+            },
+        },
+        filters:{ //在替换之前先进行过一次过滤
+            number:function(value,status){
+                if(typeof value == 'number'){
+                    return value.toFixed(status);
+                }
+            }
+        },
+    })
+</script>
+</html>

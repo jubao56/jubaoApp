@@ -1,0 +1,27 @@
+.tab {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3.5715rem;
+  background: #fff;
+  z-index: 999;
+  display: flex;
+  justify-content: space-around;
+  align-items: center; }
+
+.tab a {
+  display: block;
+  text-align: center;
+  font-size: 1.00002rem;
+  color: #000; }
+
+.tab a i {
+  font-size: 1.4286rem;
+  display: block;
+  height: 25px; }
+
+.tab a.active {
+  color: #06acf9; }
+
+/*# sourceMappingURL=tab.css.map */

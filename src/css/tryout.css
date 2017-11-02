@@ -1,0 +1,20 @@
+.regExp {
+  margin-left: 30px; }
+
+.carNumTipRight {
+  color: #13ce66; }
+
+.carNumTipError {
+  color: #ff4949; }
+
+.el-icon-circle-check:before {
+  content: "\e609"; }
+
+.el-icon-circle-close:before {
+  content: "\e60a"; }
+
+.main .part1 {
+  background: url(../img/shionfdd.png) no-repeat right center;
+  background-size: 10rem auto; }
+
+/*# sourceMappingURL=tryout.css.map */

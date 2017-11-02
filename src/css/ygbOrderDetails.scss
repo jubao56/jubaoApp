@@ -1,0 +1,421 @@
+.details {
+    background-color: #ffffff;
+    padding-bottom: 2.2rem;
+    min-height: 100%;
+}
+
+.order_item {
+    position: relative;
+    line-height: .8rem;
+    padding-left: 0.4rem;
+    font-size: .32rem;
+}
+
+.details .after:after,
+.table_line_change:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border-bottom: 1px solid #e8e8e8;
+    width: 200%;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+}
+
+.order_item_title {
+    display: inline-block;
+    width: 1.8rem;
+}
+
+.table {
+    margin-bottom: .4rem;
+}
+
+.table .table_line {
+    position: relative;
+    height: .6rem;
+    line-height: .6rem;
+}
+
+.table .table_line:before {
+    content: "";
+    position: absolute;
+    opacity: 1;
+    left: 1.8rem;
+    border-left: 1px solid #e8e8e8;
+    border-right: 1px solid #e8e8e8;
+    width: 64.2%;
+    height: 200%;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+}
+
+.details .table p {
+    width: 12.8rem;
+}
+
+.table .table_name {
+    text-align: center;
+}
+
+.table h3,
+.ygbChange h3 {
+    line-height: .8rem;
+    background-color: #f2f2f2;
+    font-weight: normal;
+    padding-left: 0.4rem;
+    font-size: .32rem;
+}
+
+.table .table_idcard {
+    width: 4rem;
+    display: inline-block;
+    text-align: center;
+}
+
+.table .table_status {
+    width: 1.3rem;
+    text-align: center;
+}
+
+.table .table_effect {
+    width: 3.3rem;
+    display: inline-block;
+    position: relative;
+    text-align: center;
+}
+
+.table .table_price {
+    width: 2.4rem;
+    display: inline-block;
+    position: relative;
+    text-align: center;
+}
+
+.table .table_effect:after {
+    content: "";
+    position: absolute;
+    opacity: 1;
+    left: 0;
+    border-left: 1px solid #e8e8e8;
+    border-right: 1px solid #e8e8e8;
+    width: 200%;
+    height: 200%;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+}
+
+.button_area {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #fff;
+}
+
+.button_area a {
+    width: 7.5rem;
+    font-size: .36rem;
+    display: inline-block;
+    line-height: .98rem;
+    text-align: center;
+    background-color: #06acf9;
+    color: #fff;
+}
+
+
+/*.button_area_first {
+    margin-bottom: .2rem;
+}*/
+
+
+/* ygbChange 员工保换人 */
+
+.ygbChange {
+    padding: .2rem 0 1.9rem;
+    background-color: #e8e8e8;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.table .table_line_change {
+    position: relative;
+    height: .7rem;
+    line-height: .7rem;
+}
+
+.table.clerk,
+.table.driver {
+    padding-left: .4rem;
+}
+
+.ygbChange .table_name,
+.ygbChange .table_idcard,
+.ygbChange .table_sel {
+    display: inline-block;
+}
+
+.ygbChange .table_name {
+    width: 1rem;
+}
+
+.ygbChange .table_idcard {
+    width: 5rem;
+}
+
+.ygbChange .table_sel {
+    width: .8rem;
+    text-align: center;
+}
+
+.sel_button {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    height: .28rem;
+    width: .28rem;
+    border-radius: 50%;
+}
+
+.sel_button_active {
+    background-color: #06acf9;
+}
+
+.sel_button:after,
+.table .input:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: 1px solid #cdcdcd;
+    width: 200%;
+    height: 200%;
+    border-radius: 50%;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+}
+.table .order_item{
+    padding-left: 0;
+}
+.table span {
+    display: inline-block;
+    position: relative;
+    line-height: .6rem;
+}
+
+.confirm .table_line_change {
+    padding-left: .4rem;
+}
+
+.table .out_name,
+.table .in_name {
+    width: 1.72rem;
+    text-align: center;
+}
+
+.table .out_name {
+    width: 1.72rem;
+}
+
+.table .out_idcard,
+.table .in_idcard {
+    width: 4.2rem;
+    text-align: center;
+}
+
+.table .out_idcard {
+    width: 4.2rem;
+}
+
+.table .handle {
+    width: 1.1rem;
+    text-align: center;
+}
+
+.out {
+    margin-bottom: .1rem;
+}
+
+.ygbChange .driver,
+.ygbChange .clerk {
+    background: #fff;
+    margin-bottom: .1rem;
+}
+
+.ygbChange .select .driver1,
+.ygbChange .select .clerk1 {
+    background: #c9c9c9;
+    margin-bottom: .1rem;
+}
+
+.ygbChange .table {
+    background: #fff;
+}
+
+.sel_button.add {
+    width: .7rem;
+    height: .3rem;
+    color: #00a0e9;
+    line-height: .3rem;
+    font-size: .26rem;
+}
+
+.sel_button.add:after {
+    border: 1px solid #00a0e9;
+    border-radius: .1rem;
+}
+
+.table .input {
+    height: .5rem;
+    line-height: .5rem;
+    letter-spacing: 1px;
+    text-align: center;
+    border: none;
+    position: relative;
+    box-sizing: border-box;
+    border: 1px solid #00a0e9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table .checked_false {
+    border: 1px solid red;
+}
+
+.table .input:after {}
+
+.table .input_name {
+    width: 100%;
+}
+
+.table .input_idcard {
+    width: 80%;
+}
+
+.fullbg {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+}
+
+.yzm,
+.pay {
+    width: 7.1rem;
+    height: 5rem;
+    background-color: #fff;
+    z-index: 11;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: .6rem .42rem 0 .42rem;
+    margin-top: 2rem;
+}
+
+.pay {
+    height: 8rem;
+    padding-top: 0;
+}
+
+.pay h3 {
+    background-color: #fff;
+    padding-left: 0;
+}
+
+.yzm p {
+    line-height: .6rem;
+    font-size: .28rem;
+}
+
+.yzm p span {
+    color: red;
+}
+
+.yzm input {
+    width: 4.5rem;
+    height: .6rem;
+    line-height: .6rem;
+    box-sizing: border-box;
+    border: .02rem solid #06acf9;
+    margin-right: .24rem;
+    text-align: center;
+    letter-spacing: .05rem;
+}
+
+.yzm_btn {
+    width: 1.5rem;
+    height: .6rem;
+    background-color: #06acf9;
+    line-height: .6rem;
+    color: #fff;
+}
+
+.yzm_btn_area,
+.pay_btn {
+    margin-top: .84rem;
+    margin-right: -0.24rem;
+}
+
+.yzm .yzm_btn_area button,
+.pay_btn button {
+    width: 3rem;
+    height: .98rem;
+    line-height: .98rem;
+    box-sizing: border-box;
+    background-color: #06acf9;
+    color: #fff;
+    margin-right: .22rem;
+}
+
+.pay_item {
+    width: 50%;
+    float: left;
+    text-align: center;
+}
+
+.QR {
+    clear: both;
+    text-align: center;
+}
+
+.pay p {
+    text-align: center;
+}
+
+.pay .pay_btn button {}
+
+i {
+    float: right;
+    margin-right: .2rem;
+    font-family: "icon" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+i.icon_show:before {
+    content: "\E6E1";
+}
+
+i.icon_hide:before {
+    content: "\E600";
+}
+
+#add_confirm {
+    padding-top: 0;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}

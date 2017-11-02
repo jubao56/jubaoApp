@@ -1,0 +1,136 @@
+a{
+    font-size: 14px;
+    text-decoration: none;
+}
+.fullbg{
+    z-index:999999999999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+.baodan{
+    border:0.1rem solid black;
+    border-radius: 0.208rem;
+    width: 96%;
+    max-width: 626px;
+    position: absolute;
+    left: 50%;
+    transform: translate3d(-50%,0,0);
+    box-shadow: 0 1px 1px #eaeaea;
+    background: #fff;
+    margin-top: 30px;
+}
+.baodan-btn {
+    display: block;
+    width: 100px;
+    height: 30px;
+    background: #069bff;
+    text-align: center;
+    line-height: 30px;
+    color: #fff;
+    border-radius: 5px;
+    margin: 0 auto 10px;
+}
+.loadEffect{
+    width: 100px;
+    height: 100px;
+    position: relative;
+    margin: 0 auto;
+    margin-top:200px;
+}
+.loadEffect span{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: black;
+    position: absolute;
+    -webkit-animation: load 1.04s ease infinite;
+}
+@-webkit-keyframes load{
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0.2;
+    }
+}
+.loadEffect span:nth-child(1){
+    left: 0;
+    top: 50%;
+    margin-top:-8px;
+    -webkit-animation-delay:0.13s;
+}
+.loadEffect span:nth-child(2){
+    left: 14px;
+    top: 14px;
+    -webkit-animation-delay:0.26s;
+}
+.loadEffect span:nth-child(3){
+    left: 50%;
+    top: 0;
+    margin-left: -8px;
+    -webkit-animation-delay:0.39s;
+}
+.loadEffect span:nth-child(4){
+    top: 14px;
+    right:14px;
+    -webkit-animation-delay:0.52s;
+}
+.loadEffect span:nth-child(5){
+    right: 0;
+    top: 50%;
+    margin-top:-8px;
+    -webkit-animation-delay:0.65s;
+}
+.loadEffect span:nth-child(6){
+    right: 14px;
+    bottom:14px;
+    -webkit-animation-delay:0.78s;
+}
+.loadEffect span:nth-child(7){
+    bottom: 0;
+    left: 50%;
+    margin-left: -8px;
+    -webkit-animation-delay:0.91s;
+}
+.loadEffect span:nth-child(8){
+    bottom: 14px;
+    left: 14px;
+    -webkit-animation-delay:1.04s;
+}
+
+
+#changeBaiduStyle a{
+    margin:6px 3px 6px 0;
+}
+.limitBg{
+    width:100%;height:60rem;background:rgba(0,0,0,0.2);
+    position: fixed;left:0;top:0;z-index:998;
+}
+.finish{
+    display: block;
+    float:right;
+    height: 3.25rem;
+    line-height: 3.25rem;
+    font-size: 1.325rem;
+    color:#000;
+    margin-right:0.5rem;
+}
+.baodan{
+    position: relative;
+}
+.baodan-btn {
+    display: block;
+    width: 8rem;
+    height: 2.5rem;
+    background: #069bff;
+    text-align: center;
+    line-height: 2.5rem;
+    color: #fff;
+    border-radius: 5px;
+    margin: 0 auto 10px;
+}

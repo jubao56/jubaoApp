@@ -1,0 +1,152 @@
+@charset "UTF-8";
+.part1Bg{
+  background: url(../img/shionfdd.png) no-repeat right bottom !important;
+}
+.main .part1{width:96%; margin-left: auto; margin-right: auto; padding-left: 2%; padding-right:2%; margin-bottom: 2rem;
+  background: #fff none repeat scroll 0 0;
+  border-bottom: 0.1rem solid #f0f0f0; border-top: 0.1rem solid #f0f0f0; box-shadow: 0 1px 1px #dfdfdf; padding: 1rem 2% 0; background-size:15rem auto;}
+
+.main b.tit{display: block; height: 2rem; margin-left: auto; margin-right: auto; padding-bottom: 0.4rem; line-height: 2rem; border-bottom: 0.042rem solid #eee;  font-family: "Microsoft YaHei"; font-size: 1.4rem; font-weight: normal; text-align: center; color: #313b4b;}
+.main .title2{width:95%; height:1.4rem; margin-bottom: 0.2rem; padding-top:0.2rem; padding-bottom: 0.2rem;  line-height: 1.4rem;  font-family: "Microsoft YaHei"; font-size: 1.3rem; font-weight: bold; color: #313b4b;}
+.all_form{margin-bottom: 2rem;}
+.all_form span.who{width:95%;display: block; height: 4rem;margin-bottom: 0.6rem ;padding-left: 0px; line-height: 2rem; font-family: "Microsoft YaHei"; font-size: 1.2rem;color: #333655;}
+.all_form ul.a_fm{display: block; font-family: "Microsoft YaHei"; font-size: 1.2rem; color: #454545;}
+.all_form ul.a_fm li{margin-bottom: 0.6rem;}
+.all_form ul.a_fm li.carNumber em.tt{width:25%; display: block;}
+.all_form ul.a_fm li.carNumber .con{width:74%; }
+.all_form ul.a_fm li.carNumber .con span{display: block; width: 45%;}
+.all_form ul.a_fm .path_01{margin-right: 1rem;}
+.allDown .checking{width: 82%; margin-bottom: 12px;margin-left: 0.5rem; padding: 1.2rem 2.1rem 2.1rem 2.1rem; border: 0 solid #eaeaea;background: #fff none repeat scroll 0 0;}
+.allDown .goOn{width: 100%; float: none; height: 44px;}
+.allDown .goOn a input.button1{float: left;cursor:pointer; width: 8rem; height: 44px; font-family:"Microsoft YaHei"; font-size: 1.2rem; color: #fff;background: url(../img/charge_go1.jpg) no-repeat center center}
+.allDown .goOn a input.button2{cursor:pointer;float:right; width: 8rem;  height: 44px; font-family: "Microsoft YaHei"; font-size: 1.2rem; color: #fff;background: url(../img/charge_go1.jpg) no-repeat center center;}
+.length em{display:inline-block; text-indent:2.4rem;font-family: "Microsoft YaHei"; font-size: 1.2rem; font-weight:bold; color: #333655;}
+.length .search_distance{font-family: "Microsoft YaHei"; font-size: 1.4rem; font-weight:bold; color: #333655;}
+
+.all_table{background: #fff none repeat scroll 0 0; border-bottom: 0.1rem solid #f0f0f0; border-top: 0.1rem solid #f0f0f0; box-shadow: 0 1px 1px #dfdfdf; margin: 0.583rem 0 0.75rem; width: 96%;}
+.all_table .tb_list{margin-left: auto; margin-right: auto; margin-bottom:1.5rem; margin-top:1.5rem;}
+
+.all_table th{height: 2rem; line-height: 2rem; font-family: "Microsoft YaHei"; font-size: 1.2rem;  font-weight:normal;  text-align:center; color: #fff; border-top:0.042rem solid #eee;border-bottom:0.042rem solid #eee; border-right:0.042rem solid #eee; background: #069bff;}
+.all_table td{border-bottom:0.1rem solid #eee; border-right:0.1rem solid #eee; font-family: "Microsoft YaHei"; font-size: 1rem; color: #454545; text-align:center; }
+.all_table .first{border-left:0.1rem solid #eee;}
+.fen00 {
+  margin-top:17rem;
+}
+
+
+.PopUp{ position:fixed; top:50%; left:-1%; z-index:999; width:27rem; padding:10px; background:url(../img/PopUp_box_bg.png) repeat;}
+.PopUp_box{ padding:20px;  background:#fff;}
+.PopUp_box .pop_conditionBox h5{height: 30px; margin-bottom: 15px; line-height: 30px; text-align: center; font-family: "Microsoft yahei"; font-size:16px; color:#333333;}
+.PopUp_box .pop_conditionBox .pop_content{height:370px; margin-bottom: 10px; padding:15px 38px; overflow-y:scroll;overflow-x:auto;  font-family: "Microsoft yahei"; font-size:14px; line-height:24px; color:#383d48; background: #e5eff7;}
+.PopUp_box .pop_conditionBox .pop_read{ position:relative; height: 30px; line-height:30px; font-family: "Microsoft yahei"; font-size:14px; color:#313b4b;}
+.PopUp_box .pop_conditionBox .pop_read input{display: block; position: absolute; width: 14px; height: 14px; border:none; outline: none; top:10px; left:0px;}
+.PopUp_box .pop_conditionBox .pop_read label{display: block; width:285px;  margin-left: 20px; height: 30px; line-height:30px; }
+.PopUp_box .pop_conditionBox .pop_button{height: 30px; position: relative;}
+.PopUp_box .pop_conditionBox .pop_button a{position:absolute; display: block; width:14rem; height: 44px; line-height: 44px; text-align: center; font-family: "Microsoft yahei"; font-size:14px; color:#fff; background: url(../img/charge_go1.jpg) no-repeat center center;}
+.PopUp_box .pop_conditionBox .pop_button a:hover{background: url(../img/charge_go2.jpg) no-repeat center center;}
+.PopUp_box .pop_conditionBox .pop_button a.pop_goBack{right:220px;}
+.PopUp_box .pop_conditionBox .pop_button a.pop_go{right:4rem;}
+.PopUp_box .pop_conditionBox .pop_button a.pop_go input{display: block; width:14rem; height: 44px; line-height: 44px; text-align: center; font-family: "Microsoft yahei"; font-size:14px; color:#fff; background: url(../img/charge_go1.jpg) no-repeat center center;}
+.PopUp_box .pop_conditionBox .pop_button a.pop_go:hover input{display: block; width:14rem; height: 44px; line-height: 44px; text-align: center; font-family: "Microsoft yahei"; font-size:14px; color:#fff; background: url(../img/charge_go2.jpg) no-repeat center center;}
+
+
+
+
+
+
+.PopUp .aa{ position:absolute; top:30px; right:35px; width:14px; height:13px; cursor: pointer;}
+
+
+.fullbg { position:fixed; left:0px; top:0px; z-index:1111111; background:url(../img/ListBg_03.png) repeat;display:none;}
+.click_upOut{width:120px; height:30px; line-height:30px; font-family: "Microsoft yahei"; font-size:14px; color:#313b4b; cursor:pointer;}
+
+
+
+
+.FullPopUp{ position:fixed; top:0; left:0; z-index:9999999; display:none; padding:10px; background:url(../img/PopUp_box_bg.png) repeat;}
+.FullPopUp_box{ padding:20px;  background:#fff;}
+
+
+.FullPopUp .aa{ position:absolute; top:5px; right:5px; width:14px; height:13px; cursor: pointer;}
+
+.infor3 {
+  width: 90%;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #f5f5f5;
+  text-align: center;
+}
+
+.infor3 span {
+  position: relative;
+  z-index: 99;
+  display: block;
+  width: 20rem;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.infor3 span label {
+  display: block;
+  float: left;
+  width: 4rem;
+  height: 30px;
+  line-height: 30px;
+  text-align: right;
+  margin-right: 10px;
+  font-family: "Microsoft yahei";
+  font-size: 12px;
+  color: #313b4b;
+}
+.infor3 span input.mdfCode {
+  width: 5rem;
+}
+.infor3 span input {
+  position: relative;
+  z-index: 99;
+  display: block;
+  float: left;
+  width: 14rem;
+  padding-left: 10px;
+  height: 30px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  line-height: 20px;
+  font-family: "Microsoft yahei";
+  font-size: 14px;
+  color: #313b4b;
+  border-radius: 5px;
+  border: 1px solid #d1d1d1;
+  background: url(../img/s_inputBg.jpg) repeat-x center center;
+}
+.infor3 span a.getYzm {
+  width: 86px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  font-family: "Microsoft yahei";
+  font-size: 12px;
+  color: #fff;
+  background: url(../img/getYzm1.jpg) no-repeat center center;
+  display: block;
+  float: left;
+  margin-left: 15px;
+}
+
+.inputError{
+  border:1px solid red !important;
+}
+.limitBg{
+  width:100%;height:60rem;background:rgba(0,0,0,0.2);
+  position: fixed;left:0;top:0;z-index:998;
+}
+
+#yhqlist{
+  //优惠券列表
+  .couponList{
+    padding-left:1rem; width: 45%; float: left;  line-height: 2rem;
+  }
+}

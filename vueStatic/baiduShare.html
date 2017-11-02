@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" media="screen">
+    <title>聚保物流保险服务平台</title>
+    <meta name="keywords" content="聚保,物流保险,聚保物流,聚保物流保险,货运保险,员工保险,普货保">
+    <meta name="description" content="聚保让您投保不上当,理赔有人帮！让物流人买到放心的保险，让物流平台放心卖保险！提供货运保险,员工保险,普货保,零担保，城配保等众多物流保险服务！">
+    <style>
+        a{
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .fullbg{
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .baodan{
+            border:0.1rem solid black;
+            border-radius: 0.208rem;
+            width: 96%;
+            max-width: 626px;
+            position: absolute;
+            left: 50%;
+            transform: translate3d(-50%,0,0);
+            box-shadow: 0 1px 1px #eaeaea;
+            background: #fff;
+            margin-top: 30px;
+        }
+        .baodan-btn {
+            display: block;
+            width: 100px;
+            height: 30px;
+            background: #069bff;
+            text-align: center;
+            line-height: 30px;
+            color: #fff;
+            border-radius: 5px;
+            margin: 0 auto 10px;
+        }
+        .loadEffect{
+            width: 100px;
+            height: 100px;
+            position: relative;
+            margin: 0 auto;
+            margin-top:200px;
+        }
+        .loadEffect span{
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: black;
+            position: absolute;
+            -webkit-animation: load 1.04s ease infinite;
+        }
+        @-webkit-keyframes load{
+            0%{
+                opacity: 1;
+            }
+            100%{
+                opacity: 0.2;
+            }
+        }
+        .loadEffect span:nth-child(1){
+            left: 0;
+            top: 50%;
+            margin-top:-8px;
+            -webkit-animation-delay:0.13s;
+        }
+        .loadEffect span:nth-child(2){
+            left: 14px;
+            top: 14px;
+            -webkit-animation-delay:0.26s;
+        }
+        .loadEffect span:nth-child(3){
+            left: 50%;
+            top: 0;
+            margin-left: -8px;
+            -webkit-animation-delay:0.39s;
+        }
+        .loadEffect span:nth-child(4){
+            top: 14px;
+            right:14px;
+            -webkit-animation-delay:0.52s;
+        }
+        .loadEffect span:nth-child(5){
+            right: 0;
+            top: 50%;
+            margin-top:-8px;
+            -webkit-animation-delay:0.65s;
+        }
+        .loadEffect span:nth-child(6){
+            right: 14px;
+            bottom:14px;
+            -webkit-animation-delay:0.78s;
+        }
+        .loadEffect span:nth-child(7){
+            bottom: 0;
+            left: 50%;
+            margin-left: -8px;
+            -webkit-animation-delay:0.91s;
+        }
+        .loadEffect span:nth-child(8){
+            bottom: 14px;
+            left: 14px;
+            -webkit-animation-delay:1.04s;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="fullbg">
+        <div class="loadEffect">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="baodan" style="opacity: 0" >
+        <a href="javascript:void(0)" id="listImgBox">
+
+        </a>
+        <br>
+        <a class="baodan-btn" href="">
+            查看电子保单
+        </a>
+    </div>
+</div>
+</body>
+<script>
+   function  getParamName(name) {
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            for(var i = 0; i < strs.length; i ++) {
+                theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+            }
+        }
+        return theRequest[name]
+    }
+    window.onload = function () {
+        var zcbUrl = "http://test.jubao56.com";
+        var phbUrl = "http://test.jubao56.com";//普货保
+        if (window.location.href.indexOf("www") != -1){
+            zcbUrl = "https://www.jubao56.com";
+            phbUrl = "https://www.jubao56.com";//普货保
+        }
+
+        var listId = getParamName('order_id');
+        var orderType = getParamName('order_type');
+        var track_no = getParamName('track_no');
+        var oBtn = document.getElementsByClassName('baodan-btn')[0];
+        var oBaoDan = document.getElementsByClassName('baodan')[0];
+
+        var btnUrl,imgUrl;
+        if(orderType == 'zcb'){
+            btnUrl = zcbUrl+'/v1/zcb/order/policy'+'?order_id='+listId;
+            imgUrl = track_no ? zcbUrl+"/v1/zcb/order/confirmation?order_id="+listId+'&track_no='+track_no : zcbUrl+"/v1/zcb/order/confirmation?order_id="+listId;
+        }else if(orderType == 'phb'){
+            btnUrl = phbUrl+'/v1/phb/order/policy'+'?order_id='+listId;
+            imgUrl = track_no ? phbUrl+"/v1/phb/order/confirmation?order_id="+listId+'&track_no='+track_no : phbUrl+"/v1/phb/order/confirmation?order_id="+listId;
+        }
+        oBtn.href = btnUrl;
+        getImg();
+        function getImg() {
+            var orderImg = imgUrl;
+            var box = document.querySelector("#listImgBox");
+            var img = document.createElement("img");
+            img.style.width="90%";
+            box.appendChild(img);
+            img.src= orderImg;
+            img.onload= function () {
+                oBaoDan.style.opacity = 1;
+            };
+        }
+    }
+</script>
+</html>

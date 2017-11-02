@@ -1,0 +1,66 @@
+.changeFile .tips {
+  height: 1.2rem;
+  padding-left: .4rem;
+  padding-top: .2rem;
+  background-color: #fcfce9;
+  margin-bottom: .2rem;
+  line-height: 1.2rem; }
+
+.tips p,
+.upload_file p {
+  line-height: .4rem;
+  font-size: .3rem;
+  display: inline-block;
+  color: #fdab3c; }
+
+.upload_file p {
+  color: #000;
+  font-size: .28rem;
+  padding-bottom: .5rem; }
+
+.tips p span {
+  color: #cc3300; }
+
+.changeFile .upload_file {
+  padding-top: .24rem;
+  padding-left: .4rem;
+  background-color: #fff;
+  height: 4.4rem;
+  margin-bottom: .1rem; }
+
+.upload_file .file {
+  float: left;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: .5rem;
+  position: relative; }
+
+.upload_file .file img {
+  width: 1.5rem;
+  height: 1.5rem; }
+
+.upload_file .file input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  opacity: 0;
+  z-index: 2; }
+
+.tips_2 p {
+  padding-left: .4rem;
+  line-height: .8rem;
+  background: #fff; }
+
+.changeFile button {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  line-height: .95rem;
+  background: #06acf9;
+  color: #fff;
+  font-size: .36rem; }
+
+/*# sourceMappingURL=ygbChangeFIle.css.map */
